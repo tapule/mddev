@@ -1,0 +1,61 @@
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects 
+*.so
+*.so.*
+*.dylib
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# rom files
+*.bin
+
+# Symbols
+symbol.txt
+
+# Resources
+
+# object dir
+obj/
+
+# binary dir
+bin/
+
+# Other files
+*.zip
+*.rar
+*.bak
+*.bk
+*.log
+*.tmp
+*.lst
+*~
+
+# VSCode project files
+*.code*
+.vscode
+
+# WIP data
+wip/
