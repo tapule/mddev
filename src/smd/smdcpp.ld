@@ -1,5 +1,5 @@
 /*
- * SEGA Megadrive/Genesis linker script for C language
+ * SEGA Megadrive/Genesis linker script for C/C++ language
  * Based on work by Chilly Willy and Stephane Dallongeville 
  */
 OUTPUT_ARCH(m68k)
@@ -16,6 +16,8 @@ __DYNAMIC  =  0;
  * +--------------------+ <- low memory
  * | .text              |
  * |        __text_start|
+ * |        ctor list   | the ctor and dtor lists are for
+ * |        dtor list   | C++ support
  * |        __text_end  |
  * +--------------------+
  * .                    .
@@ -66,9 +68,61 @@ SECTIONS
         KEEP(*(.text.vectors))
         /* Put all functions of all files in section .text in rom */
         *(.text.*) *(.text)
+
+        /*
+         * .ctors section holds an array of the global C++ constructor function
+         * ponters.
+         * __CTOR_LIST__ and __CTOR_END__ are head and tail labels for this
+         * section
+         */
+        . = ALIGN(0x4);        
+        __CTOR_LIST__ = .;
+        LONG((__CTOR_END__ - __CTOR_LIST__) / 4 - 2)
+        *(.ctors)
+        LONG(0)
+        __CTOR_END__ = .;
+
+        /*
+        * .dtors section holds an array of the global C++ destructor function
+        * ponters.
+        * __DTOR_LIST__ and __DTOR_END__ are head and tail labels for this
+        * section
+        */
+        __DTOR_LIST__ = .;
+        LONG((__DTOR_END__ - __DTOR_LIST__) / 4 - 2)
+        *(.dtors)
+        LONG(0)
+        __DTOR_END__ = .;
+
         *(.rodata .rodata.*)
+
+        /* C++ Exception handling information to unwind the stack */
+        *(.gcc_except_table .gcc_except_table.*)
+
+        /*
+        * .init section constains only a function call that calls all the C++
+        * constructors registered in __CTOR_LIST__
+        * __INIT_SECTION__ is a head labels for this section
+        */        
+        . = ALIGN(0x4);
+        __INIT_SECTION__ = . ;
+        *(.init)
+        SHORT (0x4E75)	/* rts */
+
+        /*
+        * .fini section constains only a function call that calls all the C++
+        * destructors registered in __DTOR_LIST__
+        * __FINI_SECTION__ is a head labels for this section
+        */
+        __FINI_SECTION__ = . ;
+        *(.fini)
+        SHORT (0x4E75)	/* rts */
+
         __text_end = .;
         *(.lit)         /* ???? */
+
+        *(.rodata_bin)  /* ???? */
+        *(.rodata_binf) /* ???? */
     } > rom
     __text_size = SIZEOF (.text);
 
@@ -115,5 +169,13 @@ SECTIONS
     .stabstr 0 (NOLOAD) :
     {
         *(.stabstr)
+    }
+
+    /*
+     * C++ exception handling tables to unwind the stack
+     */
+    .eh_frame 0 (NOLOAD) :
+    {
+        *(.eh_frame)
     }
 }
