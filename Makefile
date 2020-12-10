@@ -48,6 +48,7 @@ CSRC  = $(wildcard src/*.c)
 CSRC += $(wildcard src/smd/*.c)
 SSRC  = $(wildcard src/*.s)
 SSRC += $(wildcard src/smd/*.s)
+SSRC += $(wildcard src/smd/boot/*.s)
 # Z80 source for XGM driver
 ZSRC  = $(wildcard src/smd/xgm/*.s80)
 # Resources
@@ -85,15 +86,17 @@ asm: EXFLAGS  = -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
 asm: EXFLAGS += -fshort-enums
 asm: $(OUTASM)
 
-obj/src/smd/boot/boot.o:
-	@echo "-> Building rom boot..."
-	@mkdir -p $(dir $@)
-	$(AS) $(ASFLAGS) src/smd/boot/boot.s -o $@
+#obj/src/smd/boot/boot.o:
+#	@echo "-> Building rom boot..."
+#	@mkdir -p $(dir $@)
+#	$(AS) $(ASFLAGS) src/smd/boot/boot.s -o $@
 
-bin/rom.elf: obj/src/smd/boot/boot.o $(OUTOBJS)
+# bin/rom.elf: obj/src/smd/boot/boot.o $(OUTOBJS)
+bin/rom.elf: $(OUTOBJS)
 	@echo "-> Building ELF..."
 	@mkdir -p $(dir $@)
-	$(CC) -o $@ $(LDFLAGS) obj/src/smd/boot/boot.o $(OUTOBJS) $(LIBS)
+	# $(CC) -o $@ $(LDFLAGS) obj/src/smd/boot/boot.o $(OUTOBJS) $(LIBS)
+	$(CC) -o $@ $(LDFLAGS) $(OUTOBJS) $(LIBS)
 
 bin/rom.bin: bin/rom.elf
 	@echo "-> Stripping ELF header..."

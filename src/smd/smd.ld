@@ -62,13 +62,20 @@ SECTIONS
     .text 0x00000000:
     {
         __text_start = .;
-        /* Keep section .text.vectors at the start of .text section in rom */
-        KEEP(*(.text.vectors))
+        /*
+         * Keep sections .text.vectors .text.smdheader .text.smdboot at the
+         * start of .text section in rom
+         */
+        KEEP(*(.text.smdvectors))
+        KEEP(*(.text.smdheader))
+        KEEP(*(.text.smdboot))
+
         /* Put all functions of all files in section .text in rom */
         *(.text.*) *(.text)
+        /* Read only sections */
         *(.rodata .rodata.*)
-        __text_end = .;
-        *(.lit)         /* ???? */
+        *(.lit)
+        __text_end = .;        
     } > rom
     __text_size = SIZEOF (.text);
 

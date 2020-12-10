@@ -6,9 +6,10 @@
  *   - Interrupt handlers
  -----------------------------------------------------------------------------*/
 
-.section .text.smdboot
+.section .text.smdvectors
+    .org    0x00000000          /* Forces linker to put it at the beginning */
 
-_smd_boot:
-    dc.l    0xEEEEEEEE
-    dc.l    0xFFFFFFFF
-    
+_rom_start:
+_smd_vectors:
+    dc.l    0xAAAAAAAA
+    dc.l    0xBBBBBBBB

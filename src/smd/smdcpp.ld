@@ -94,7 +94,9 @@ SECTIONS
         LONG(0)
         __DTOR_END__ = .;
 
+        /* Read only sections */
         *(.rodata .rodata.*)
+        *(.lit) 
 
         /* C++ Exception handling information to unwind the stack */
         *(.gcc_except_table .gcc_except_table.*)
@@ -119,8 +121,8 @@ SECTIONS
         SHORT (0x4E75)	/* rts */
 
         __text_end = .;
-        *(.lit)         /* ???? */
 
+        /* Used by SGDK's Rescomp to put resources */
         *(.rodata_bin)  /* ???? */
         *(.rodata_binf) /* ???? */
     } > rom
