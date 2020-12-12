@@ -1,13 +1,13 @@
-#include "test.h"
+static int arr[] = { 1, 10, 4, 5, 6, 7 };
+static int sum;
+static const int n = sizeof(arr) / sizeof(arr[0]);
 
 int main()
 {
     int i;
 
-    for (i = 0; i < 100; ++i)
+    for (i = 0; i < n; ++i)
     {
-        foo(0);
+        sum += arr[i];
     }
-
-    return 0;
 }

@@ -9,6 +9,8 @@
 .section .text.smdboot
 
 _smd_boot:
-    dc.l    0xEEEEEEEE
-    dc.l    0xFFFFFFFF
+    dc.l    0xCCCCCCCC
+    dc.l    0xCCCCCCCC
+    dc.l    0xCCCCCCCC
+    dc.l    0xCCCCCCCC            
     

@@ -15,27 +15,31 @@ __DYNAMIC  =  0;
  * The memory map look like this:
  * +--------------------+ <- low memory
  * | .text              |
- * |        __text_start|
+ * |        _stext      |
  * |        ctor list   | the ctor and dtor lists are for
- * |        dtor list   | C++ support
- * |        __text_end  |
+ * |        dtor list   | C++ support 
+ * |        _etext      |
+ * +--------------------+
+ * | .rodata            | Read only data
+ * |        _srodata    |
+ * |        _erodata    |
  * +--------------------+
  * .                    .
  * .                    .
  * .                    .
  * +--------------------+ <- 0x00FF0000
- * | .data              | initialized data goes here
- * |        __data_start|
- * |        __data_end  |
+ * | .data              | Initialized data goes here
+ * |        _sdata      | Must be copied at boot time
+ * |        _edata      |
  * +--------------------+
- * | .bss               |
- * |        __bss_start | start of bss, cleared by crt0
- * |        __bss_end   | start of heap, used by sbrk()
+ * | .bss               | Uninitialized data goes here
+ * |        _sbss       | Must be cleared at boot time
+ * |        _ebss       | Start of heap, used by sbrk()
  * +--------------------+
  * .                    .
  * .                    .
  * .                    .
- * |        __stack     | top of stack
+ * |        __stack     | Top of stack
  * +--------------------+ <- 0x01000000
  */
 
@@ -54,19 +58,30 @@ MEMORY
 PROVIDE (__stack = 0x01000000);
 
 /*
- * Section definitions: What part of a program should go where
+ * Section definitions: What part of a program should go where, that is,
+ * describes the memory layout of the output file specifying how the sections
+ * are going to be merged and at what location are going to be placed.
  */
 SECTIONS
 {
     /*
-     * .text: Code & constant. Added to the rom
+     * .text output section : Code & constant. Added to the rom
      */
     .text 0x00000000:
     {
-        __text_start = .;
-        /* Keep section .text.vectors at the start of .text section in rom */
-        KEEP(*(.text.vectors))
-        /* Put all functions of all files in section .text in rom */
+        /* Define tag _stext at location counter position */
+        _stext = .;
+        /*
+         * Which input section should be placed into this output section.
+         *
+         * Put input sections .text.vectors .text.smdheader .text.smdboot at the
+         * very start of .text section in rom and mark them as non-removables
+         * by link-time garbage collector.
+         */
+        KEEP(*(.text.smdvectors))
+        KEEP(*(.text.smdheader))
+        KEEP(*(.text.smdboot))
+        /* Put all .text input section of all files here */
         *(.text.*) *(.text)
 
         /*
@@ -94,10 +109,6 @@ SECTIONS
         LONG(0)
         __DTOR_END__ = .;
 
-        /* Read only sections */
-        *(.rodata .rodata.*)
-        *(.lit) 
-
         /* C++ Exception handling information to unwind the stack */
         *(.gcc_except_table .gcc_except_table.*)
 
@@ -120,40 +131,63 @@ SECTIONS
         *(.fini)
         SHORT (0x4E75)	/* rts */
 
-        __text_end = .;
-
-        /* Used by SGDK's Rescomp to put resources */
-        *(.rodata_bin)  /* ???? */
-        *(.rodata_binf) /* ???? */
+        /* Define tag _etext at the end of this section */
+        _etext = .;  
     } > rom
     __text_size = SIZEOF (.text);
 
-    /*
-     * .data: Initialized data
+     /*
+     * .rodata output section: Read only data, global variables marked as const
+     * and string constants.
      */
-    .data 0xFF0000 :
+    .rodata :
     AT ( ADDR (.text) + SIZEOF (.text) )
     {
-        __data_start = .;
+        _srodata = .;
+        *(.rodata .rodata.*)
+        *(.lit)
+
+        /* Used by SGDK's Rescomp to put resources */
+        *(.rodata_bin)
+        *(.rodata_binf)        
+        _erodata = .;        
+    } > rom
+    _rodata_size = SIZEOF (.rodata);
+
+     /*
+     * .data output section: Read-write initialized global and static data
+     * 0xFF0000 is the VMA (Virtual Memory Address): Address where this section
+     * would be during execution.
+     * ADDR (.text) + SIZEOF (.text) is the LMA (Load Memory Address): Address
+     * where it would be stored in rom to be loaded at runtime.
+     * This data has to be copied from rom to ram at boot time!!
+     */
+    .data 0xFF0000 :
+    AT ( ADDR (.text) + SIZEOF (.text) + SIZEOF(.rodata) )
+    {
+        _sdata = .;
         *(.got.plt) *(.got)
         *(.shdata)
         *(.data .data.*)
-        __data_end = .;
+        _edata = .;
     } > ram
-    __data_size = SIZEOF (.data);
+    _data_size = SIZEOF (.data);
 
     /*
-     * .bss: Uninitialized data
+     * .bss output section: Read-write Uninitialized data
+     * It would be placed at runtime just after .data section.
+     * This data has to be initialized to zero at boot time!!
      */
     .bss 0xFF0000 + SIZEOF (.data) :
     {
-        __bss_start = . ;
+        _sbss = . ;
+        /* Statically-allocated variables represented solely by zero-valued bits initially */
         *(.shbss)
         *(.bss .bss.*)
         *(COMMON)
-        __bss_end = . ;
+        _ebss = . ;
     } > ram
-    __bss_size = SIZEOF (.bss);
+    _bss_size = SIZEOF (.bss);
 
     /*
      * Debugging information encapsulated in stab assembler directives.

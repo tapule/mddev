@@ -7,9 +7,11 @@
  -----------------------------------------------------------------------------*/
 
 .section .text.smdvectors
-    .org    0x00000000          /* Forces linker to put it at the beginning */
+    .org    0x00000000
 
 _rom_start:
 _smd_vectors:
     dc.l    0xAAAAAAAA
-    dc.l    0xBBBBBBBB
+    dc.l    0xAAAAAAAA
+    dc.l    0xAAAAAAAA
+    dc.l    0xAAAAAAAA
