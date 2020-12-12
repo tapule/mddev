@@ -86,16 +86,9 @@ asm: EXFLAGS  = -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
 asm: EXFLAGS += -fshort-enums
 asm: $(OUTASM)
 
-#obj/src/smd/boot/boot.o:
-#	@echo "-> Building rom boot..."
-#	@mkdir -p $(dir $@)
-#	$(AS) $(ASFLAGS) src/smd/boot/boot.s -o $@
-
-# bin/rom.elf: obj/src/smd/boot/boot.o $(OUTOBJS)
 bin/rom.elf: $(OUTOBJS)
 	@echo "-> Building ELF..."
 	@mkdir -p $(dir $@)
-	# $(CC) -o $@ $(LDFLAGS) obj/src/smd/boot/boot.o $(OUTOBJS) $(LIBS)
 	$(CC) -o $@ $(LDFLAGS) $(OUTOBJS) $(LIBS)
 
 bin/rom.bin: bin/rom.elf
