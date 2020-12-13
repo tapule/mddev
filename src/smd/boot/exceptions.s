@@ -1,8 +1,15 @@
+/* SPDX-License-Identifier: MIT */
 /**
- * @file exceptions.s
- * @author Tapule
- * @brief Exceptions handlers
+ * MDDev development kit
+ * Copyright: 2020 Juan Ángel Moreno Fernández (@_tapule)
+ * Github: https://github.com/tapule/mddev
+ *
+ * File: exceptions.s
+ * Exception handlers
+ * 
+ * Response handlers for the more important exceptions on SMD
  */
+
 .section .text
 
 .global _exc_bus_error

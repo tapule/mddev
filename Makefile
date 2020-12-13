@@ -1,3 +1,13 @@
+# SPDX-License-Identifier: MIT
+#
+# MDDev development kit
+# Copyright: 2020 Juan Ángel Moreno Fernández (@_tapule)
+# Github: https://github.com/tapule/mddev
+#
+# Makefile
+# Project compiler makefile script
+#
+
 # Default paths for Marsdev
 MARSDEV ?= /opt/mars
 MARSBIN  = $(MARSDEV)/m68k-elf/bin

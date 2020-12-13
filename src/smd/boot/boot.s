@@ -1,11 +1,21 @@
+/* SPDX-License-Identifier: MIT */
 /**
- * @file header.s
- * @author Tapule
- * @brief Sega Megadrive/Genesis bootstrap code
+ * MDDev development kit
+ * Copyright: 2020 Juan Ángel Moreno Fernández (@_tapule)
+ * Github: https://github.com/tapule/mddev
  *
- * @see https://blog.bigevilcorporation.co.uk/2012/03/09/sega-megadrive-3-awaking-the-beast/
- * @see https://darkdust.net/writings/megadrive/initializing
+ * File: boot.s
+ * Sega Megadrive/Genesis bootstrap code
+ * 
+ * At boot, the SMD has nothing initialised. We have to set up all pieces to
+ * recover a clean state.
+ * On top of that, we must do some extra tasks to use the C language.
+ *
+ * More info:
+ * https://blog.bigevilcorporation.co.uk/2012/02/28/sega-megadrive-1-getting-started
+ * https://www.namelessalgorithm.com/genesis/blog/genesis/
  */
+
 .section .text.smdboot
 
 .global _smd_boot

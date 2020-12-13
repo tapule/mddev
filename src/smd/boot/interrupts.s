@@ -1,8 +1,15 @@
+/* SPDX-License-Identifier: MIT */
 /**
- * @file exceptions.s
- * @author Tapule
- * @brief Interrupts handlers
+ * MDDev development kit
+ * Copyright: 2020 Juan Ángel Moreno Fernández (@_tapule)
+ * Github: https://github.com/tapule/mddev
+ *
+ * File: interrupts.s
+ * Interrupt handlers
+ * 
+ * Response handlers for the more important interrupts on SMD
  */
+
  .section .text
 
 .global _int_external

@@ -1,11 +1,20 @@
+/* SPDX-License-Identifier: MIT */
 /**
- * @file vectors.s
- * @author Tapule
- * @brief Sega Megadrive/Genesis m68k vector table
+ * MDDev development kit
+ * Copyright: 2020 Juan Ángel Moreno Fernández (@_tapule)
+ * Github: https://github.com/tapule/mddev
  *
- * @see https://blog.bigevilcorporation.co.uk/2012/02/28/sega-megadrive-1-getting-started
- * @see https://www.namelessalgorithm.com/genesis/blog/genesis/
+ * File: vectors.s
+ * Sega Megadrive/Genesis m68k vector table
+ * 
+ * All SMD m68k programs must have this vector table at their very beginning.
+ * Each entry (32bit address) is used by the m68k in concrete cases.
+ *
+ * More info:
+ * https://blog.bigevilcorporation.co.uk/2012/02/28/sega-megadrive-1-getting-started
+ * https://www.namelessalgorithm.com/genesis/blog/genesis/
  */
+ 
 .section .text.smdvectors
     .org    0x00000000            /* Forces linker to put it at the beginning */
 

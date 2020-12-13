@@ -1,7 +1,20 @@
-/*
- * SEGA Megadrive/Genesis linker script for C/C++ language
- * Based on work by Chilly Willy and Stephane Dallongeville 
+/* SPDX-License-Identifier: MIT */
+/**
+ * MDDev development kit
+ * Copyright: 2020 Juan Ángel Moreno Fernández (@_tapule)
+ * Github: https://github.com/tapule/mddev
+ *
+ * File: smdcpp.ld
+ * SEGA Megadrive/Genesis linker script for C++ language
+ *
+ * Linker script for C language based on work by Chilly Willy and Stephane
+ * Dallongeville
+ *
+ * More info:
+ * https://doc.ecoscentric.com/gnutools/doc/ld.pdf
+ * https://interrupt.memfault.com/blog/how-to-write-linker-scripts-for-firmware
  */
+
 OUTPUT_ARCH(m68k)
 SEARCH_DIR(.)
 /*GROUP(-lbcc -lc -lgcc)*/
