@@ -20,14 +20,54 @@
 
 .global _smd_boot
 _smd_boot:
-    move.w	#0x2700, sr             /* Disable ints */
+    /* Disable interrupts */
+    move.w  #0x2700, sr
 
-   	move.b	0xa10001, d0            /* Check version, TMSS only on model 1+ */
-	andi.b	#0x0F, d0               /* Version 0 = skip TMSS */
-	beq	.skip_tmss
-	move.l	#0x53454741, 0xa14000   /* Write 'SEGA' to TMSS register */
+    /* Check if we are doing a cool or a hoot boot */
+    /* If any controller CTRL port is setup, we are doing a hot boot */
+    tst.l   0xa10008                /* Test CTRL 1 and 2 at the same time */
+    bne.s   skip_ctrl3
+    tst.l   0xa1000c                /* Test CTRL 3 */
+skip_ctrl3:
+    bne.s   hot_boot
 
-.skip_tmss:
- 
+    /* We are doing a cool boot, we must do all the initialization stuff */
+cool_boot:
 
-    jmp	main
+    /* TMSS (Trademark Security System) handshake */
+    move.b  0xa10001, d0            /* Check version, TMSS only on model 1+ */
+    andi.b  #0x0F, d0               /* Version 0, TMSS not present, skip */
+    beq skip_tmss
+    move.l  #0x53454741, 0xa14000   /* Write 'SEGA' to TMSS register */
+skip_tmss:
+
+
+    /* hardware initialization goes here */
+
+
+    /* We are doing a hot boot (reset), some parts are already initialized */
+hot_boot:
+
+    /* Clear all work RAM (This includes bss and stack) */
+    lea     0xFF0000, a0            /* RAM offset */
+    moveq   #0, d0
+    move.w  #0x3FFF, d1             /* Counter = 64k / 4 */
+clear_loop:
+    move.l  d0, (a0)+
+    dbra    d1, clear_loop 
+
+    /* Copy initialized global and static data from ROM to work RAM */
+    lea     _sdata, a0              /* Start of initialized data in ROM */
+    lea     0xFF0000,a1             /* First RAM address */
+    move.l  #_data_size, d0         /* Size of data to copy in bytes */
+    addq.l  #1, d0                  /* Adjust to use words instead of bytes */
+    lsr.l   #1, d0
+    beq     skip_copy               /* No data to copy */
+    subq.w  #1, d0                  /* Adjust to use 0 in dbra */
+copy_loop:
+    move.w  (a0)+, (a1)+            /* Copy a word of data to RAM */
+    dbra    d0, copy_loop
+skip_copy:
+
+    jmp     main
+    beq.s   _smd_boot               /* main returned, reset */

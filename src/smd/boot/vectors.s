@@ -23,7 +23,7 @@ _smd_vectors:
     .long    0x00000000                  /* Initial stack ptr value (0 - 1 = ffffffff) */
     .long    _smd_boot                   /* Program entry point */
 
-    /* Exception vectors */
+    /* Hardware exception vectors */
     .long    _exc_bus_error             /* Bus error */
     .long    _exc_address_error         /* Address error */
     .long    _exc_illegal_instruction   /* Illegal instruction */
@@ -47,7 +47,7 @@ _smd_vectors:
     .long    _exc_unhandled             /* Unused (reserved) */
     .long    _exc_unhandled             /* Unused (reserved) */
     .long    _exc_unhandled             /* Unused (reserved) */
-    /* interrupts */
+    /* Hardware Interrupts */
     .long    _int_unhandled             /* Spurious interrupt */    
     .long    _int_unhandled             /* IRQ level 1 */
     .long    _int_external              /* IRQ level 2 (External interrupt) */
@@ -73,7 +73,7 @@ _smd_vectors:
     .long    _exc_unhandled             /* TRAP #13 exception */
     .long    _exc_unhandled             /* TRAP #14 exception */
     .long    _exc_unhandled             /* TRAP #15 exception */
-    /* Unused interrupt vectors */
+    /* Unused interrupt vectors (reserved) */
     .long    _int_unhandled             /* Unused (reserved) */
     .long    _int_unhandled             /* Unused (reserved) */
     .long    _int_unhandled             /* Unused (reserved) */

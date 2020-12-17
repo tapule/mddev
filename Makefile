@@ -18,6 +18,7 @@ CC   = $(MARSBIN)/m68k-elf-gcc
 AS   = $(MARSBIN)/m68k-elf-as
 LD   = $(MARSBIN)/m68k-elf-ld
 NM   = $(MARSBIN)/m68k-elf-nm
+GDB  = $(MARSBIN)/m68k-elf-gdb
 OBJC = $(MARSBIN)/m68k-elf-objcopy
 
 # Z80 Assembler to build XGM driver
@@ -26,7 +27,7 @@ ASMZ80   = $(TOOLSBIN)/sjasm
 # Tools
 # TODO: Include tools to manage resources etc.
 BINTOS  = $(TOOLSBIN)/bintos
-BLASTEM = $(MARSBIN)/blastem/blastem
+BLASTEM = $(MARSDEV)/blastem/blastem
 
 # Some files needed are in a versioned directory
 GCC_VER := $(shell $(CC) -dumpversion)
@@ -137,7 +138,15 @@ obj/symbol.txt: bin/rom.bin
 	@echo "-> Exporting symbol table..."
 	$(NM) --plugin=$(PLUGIN)/$(LTO_SO) -n bin/rom.elf > obj/symbol.txt
 
-.PHONY: clean
+.PHONY: run drun clean 
+
+run: release
+	@echo "-> running..."
+	@$(BLASTEM) bin/rom.bin
+
+drun: debug
+	@echo "-> running gdb"
+	@$(GDB) -ex "target remote | $(BLASTEM) bin/rom.bin -D" bin/rom.elf
 
 clean:
 	@echo "-> Cleaning project..."
