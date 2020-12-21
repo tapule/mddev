@@ -7,7 +7,7 @@
  * File: interrupts.s
  * Interrupt handlers
  * 
- * Response handlers for the more important interrupts on SMD
+ * Response handlers for the most important interrupts on SMD
  */
 
  .section .text

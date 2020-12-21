@@ -7,7 +7,7 @@
  * File: exceptions.s
  * Exception handlers
  * 
- * Response handlers for the more important exceptions on SMD
+ * Response handlers for the most important exceptions on SMD
  */
 
 .section .text
