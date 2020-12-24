@@ -40,10 +40,11 @@ cool_boot:
     beq skip_tmss
     move.l  #0x53454741, 0xa14000   /* Write 'SEGA' to TMSS register */
 skip_tmss:
-
-
+  
     /* hardware initialization goes here */
-
+    
+    /* Initialize the z80 secondary CPU */
+    jsr z80_init
 
     /* We are doing a hot boot (reset), some parts are already initialized */
 hot_boot:

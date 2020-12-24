@@ -6,7 +6,8 @@ static const int n = sizeof(arr) / sizeof(arr[0]);
 
 int main()
 {
-    z80_bus_request();
+    z80_init();
+    z80_program_load((uint8_t*) 0x000000, 256);
     
     int i;
     while (1)

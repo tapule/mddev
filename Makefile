@@ -146,7 +146,9 @@ run: release
 
 drun: debug
 	@echo "-> running gdb"
-	@$(GDB) -ex "target remote | $(BLASTEM) bin/rom.bin -D" bin/rom.elf
+#	@$(GDB) -ex "target remote | $(BLASTEM) bin/rom.bin -D" bin/rom.elf
+#	@gdbgui --gdb-cmd="$(GDB) -ex \"target remote | $(BLASTEM) bin/rom.bin -D\" bin/rom.elf" bin/rom.elf
+	@mame megadriv -debug -cart bin/rom.bin
 
 clean:
 	@echo "-> Cleaning project..."
