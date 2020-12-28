@@ -4,11 +4,10 @@
  * Copyright: 2020 Juan Ángel Moreno Fernández (@_tapule)
  * Github: https://github.com/tapule/mddev
  *
- * File: z80.x
+ * File: z80.c
  * Control routines for the Zilog Z80 CPU
  */	
 
-#include <stdint.h>
 #include "z80.h"
 
 /* Z80 control ports */
@@ -83,7 +82,7 @@ void z80_bus_release(void)
 
 void z80_program_load(const uint8_t *src, uint16_t size)
 {
-    /* Copy program from the start of z80 internal RAM */
+    /* Copy program to the start of z80 internal RAM */
     uint8_t *dest = (uint8_t *) z80_ram_address;
 
     z80_bus_request();

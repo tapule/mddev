@@ -27,7 +27,7 @@ _smd_boot:
     /* If any controller CTRL port is setup, we are doing a hot boot */
     tst.l   0xa10008                /* Test CTRL 1 and 2 at the same time */
     bne.s   skip_ctrl3
-    tst.l   0xa1000c                /* Test CTRL 3 */
+    tst.w   0xa1000c                /* Test CTRL 3 */
 skip_ctrl3:
     bne.s   hot_boot
 
@@ -44,7 +44,9 @@ skip_tmss:
     /* hardware initialization goes here */
     
     /* Initialize the z80 secondary CPU */
-    jsr z80_init
+    bsr z80_init
+    /* Initialize gamepad ports */
+    bsr pad_init
 
     /* We are doing a hot boot (reset), some parts are already initialized */
 hot_boot:

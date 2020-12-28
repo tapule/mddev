@@ -1,20 +1,34 @@
-#include "smd/z80.h"
+#include <stdint.h>
+#include "smd/pad.h"
 
-static int arr[] = { 1, 10, 4, 5, 6, 7 };
-static int sum;
-static const int n = sizeof(arr) / sizeof(arr[0]);
+volatile uint16_t s1;
+volatile uint16_t s2;
+volatile uint16_t s3;
 
 int main()
 {
-    z80_init();
-    z80_program_load((uint8_t*) 0x000000, 256);
-    
-    int i;
+    uint8_t type[2];
+
+    pad_update();
+    type[0] = pad_type(PAD_1);
+    type[1] = pad_type(PAD_2);
+
+
     while (1)
     {
-        for (i = 0; i < n; ++i)
+        uint16_t i;
+
+        for (i = 0; i< 1000; ++i)
         {
-            sum += arr[i];
+            __asm__ volatile ("\tnop\n");
+            __asm__ volatile ("\tnop\n");
+            __asm__ volatile ("\tnop\n");
+            __asm__ volatile ("\tnop\n");
         }
+        s1 = pad_btn_state(PAD_1, PAD_BTN_LEFT);
+        s2 = pad_btn_pressed(PAD_1, PAD_BTN_LEFT);
+        s3 = pad_btn_released(PAD_1, PAD_BTN_LEFT);
+
+        pad_update();
     }
 }
