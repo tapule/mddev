@@ -41,12 +41,12 @@ cool_boot:
     move.l  #0x53454741, 0xa14000   /* Write 'SEGA' to TMSS register */
 skip_tmss:
   
-    /* hardware initialization goes here */
-    
     /* Initialize the z80 secondary CPU */
     bsr z80_init
     /* Initialize gamepad ports */
     bsr pad_init
+    /* Initialize the PSG (Programmable Sound Generator) */
+    bsr psg_init
 
     /* We are doing a hot boot (reset), some parts are already initialized */
 hot_boot:
