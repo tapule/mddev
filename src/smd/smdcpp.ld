@@ -133,7 +133,7 @@ SECTIONS
         . = ALIGN(0x4);
         __INIT_SECTION__ = . ;
         *(.init)
-        SHORT (0x4E75)	/* rts */
+        SHORT (0x4E75)  /* rts */
 
         /*
         * .fini section constains only a function call that calls all the C++
@@ -142,7 +142,7 @@ SECTIONS
         */
         __FINI_SECTION__ = . ;
         *(.fini)
-        SHORT (0x4E75)	/* rts */
+        SHORT (0x4E75)  /* rts */
 
         /* Define tag _etext at the end of this section */
         _etext = .;  

@@ -6,7 +6,7 @@
  *
  * File: z80.c
  * Control routines for the Zilog Z80 CPU
- */	
+ */
 
 #include "z80.h"
 

@@ -6,7 +6,7 @@
  *
  * File: psg.c
  * Control routines for Sega Megadrive/Genesis PSG
- */	
+ */
 
 #include <stdint.h>
 #include "psg.h"
@@ -19,7 +19,7 @@ void psg_init(void)
     uint16_t i;
 
     /* Do silence in all 4 channels */
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < 4; ++i)
     {
         /* Set volume (attenuation) to 15 which is silence */
         *psg_port = 0x90 | (i << 5) | 0x0F;

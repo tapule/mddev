@@ -6,7 +6,7 @@
  *
  * File: pad.c
  * Control routines for Sega Megadrive/Genesis gamepads
- */	
+ */ 
 
 #include "pad.h"
 #include "z80.h"
@@ -82,43 +82,43 @@ void pad_update(void)
      */
     *pad_data_port[PAD_1] = 0x40;
     *pad_data_port[PAD_2] = 0x40;
- 	__asm__ volatile ("\tnop\n");
-	__asm__ volatile ("\tnop\n");
+    __asm__ volatile ("\tnop\n");
+    __asm__ volatile ("\tnop\n");
     pad_state[PAD_1] = *pad_data_port[PAD_1] & 0x3F;
-	pad_state[PAD_2] = *pad_data_port[PAD_2] & 0x3F;
+    pad_state[PAD_2] = *pad_data_port[PAD_2] & 0x3F;
     /* 2nd step read:
      * | ?| ?|St| A| 0| 0| D| U|
      */
     *pad_data_port[PAD_1] = 0x00;
     *pad_data_port[PAD_2] = 0x00;
- 	__asm__ volatile ("\tnop\n");
-	__asm__ volatile ("\tnop\n");
+    __asm__ volatile ("\tnop\n");
+    __asm__ volatile ("\tnop\n");
     /* Rearrange into |St| A| C| B| R| L| D| U| */
-	pad_state[PAD_1] |= ((*pad_data_port[PAD_1] & 0x30) << 2);
-	pad_state[PAD_2] |= ((*pad_data_port[PAD_2] & 0x30) << 2);
+    pad_state[PAD_1] |= ((*pad_data_port[PAD_1] & 0x30) << 2);
+    pad_state[PAD_2] |= ((*pad_data_port[PAD_2] & 0x30) << 2);
     /* Steps 3rd, 4th and 5th:
      * Ignore results
      */
     *pad_data_port[PAD_1] = 0x40;
     *pad_data_port[PAD_2] = 0x40;
- 	__asm__ volatile ("\tnop\n");
-	__asm__ volatile ("\tnop\n");
+    __asm__ volatile ("\tnop\n");
+    __asm__ volatile ("\tnop\n");
     *pad_data_port[PAD_1] = 0x00;
     *pad_data_port[PAD_2] = 0x00;
- 	__asm__ volatile ("\tnop\n");
-	__asm__ volatile ("\tnop\n");
+    __asm__ volatile ("\tnop\n");
+    __asm__ volatile ("\tnop\n");
     *pad_data_port[PAD_1] = 0x40;
     *pad_data_port[PAD_2] = 0x40;
- 	__asm__ volatile ("\tnop\n");
-	__asm__ volatile ("\tnop\n");
+    __asm__ volatile ("\tnop\n");
+    __asm__ volatile ("\tnop\n");
     /* 6th step read:
      * | ?| ?|St| A| 0| 0| 0| 0|
      * If bits 3-0 are 0 it's a 6-button gamepad, otherwhise it's a 3-button.
      */
     *pad_data_port[PAD_1] = 0x00;
     *pad_data_port[PAD_2] = 0x00;
- 	__asm__ volatile ("\tnop\n");
-	__asm__ volatile ("\tnop\n");
+    __asm__ volatile ("\tnop\n");
+    __asm__ volatile ("\tnop\n");
     if ((*pad_data_port[PAD_1] & 0x0F) != 0x00)
     {
         pad_types[PAD_1] = PAD_TYPE_3BTN;
@@ -130,8 +130,8 @@ void pad_update(void)
          * | ?| ?| C| B| Md| X| Y| Z|
         */
         *pad_data_port[PAD_1] = 0x40;
- 	    __asm__ volatile ("\tnop\n");
-	    __asm__ volatile ("\tnop\n");
+        __asm__ volatile ("\tnop\n");
+        __asm__ volatile ("\tnop\n");
         pad_state[PAD_1] |= ((*pad_data_port[PAD_1] & 0x0F) << 8);
     }
     if ((*pad_data_port[PAD_2] & 0x0F) != 0x00)
@@ -145,8 +145,8 @@ void pad_update(void)
          * | ?| ?| C| B| Md| X| Y| Z|
         */
         *pad_data_port[PAD_2] = 0x40;
- 	    __asm__ volatile ("\tnop\n");
-	    __asm__ volatile ("\tnop\n");
+        __asm__ volatile ("\tnop\n");
+        __asm__ volatile ("\tnop\n");
         pad_state[PAD_2] |= ((*pad_data_port[PAD_2] & 0x0F) << 8);
     }
     z80_bus_release();
