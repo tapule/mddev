@@ -163,6 +163,7 @@ inline uint8_t pad_type(const uint16_t pad)
 
 bool pad_btn_state(const uint16_t pad, const uint16_t buttons)
 {
+	/* TODO: Change these if's for some assert system */
     if (pad > PAD_NUM)
     {
         return false;
