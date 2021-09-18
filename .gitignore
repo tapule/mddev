@@ -57,8 +57,16 @@ bin/
 *.code*
 .vscode
 
+# Resources source data
+res-src/
+
 # WIP data
 wip/
+doc-wip/
+res-src-wip/
 
 # Mame history dir
 history/
+
+# header.s
+src/smd/boot/header.s

@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT */
 /**
  * MDDev development kit
- * Copyright: 2020 Juan Ángel Moreno Fernández (@_tapule)
+ * Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021 
  * Github: https://github.com/tapule/mddev
  *
  * File: psg.h
@@ -21,9 +21,9 @@
 #define PSG_H
 
 /**
- * @brief Initializes the PSG sound hardware.
+ * @brief initialises the PSG sound hardware.
  * 
- * Controls the initialization process of the PSG. It reset the channels and
+ * Controls the initialisation process of the PSG. It reset the channels and
  * put them in silence.
  * 
  * @note This function is called from the boot process so maybe you don't need
@@ -31,4 +31,4 @@
  */
 void psg_init(void);
 
-#endif // PSG_H
+#endif /* PSG_H */

@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 #
 # MDDev development kit
-# Copyright: 2020 Juan Ángel Moreno Fernández (@_tapule)
+# Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021
 # Github: https://github.com/tapule/mddev
 #
 # Makefile
@@ -64,10 +64,10 @@ SSRC += $(wildcard src/smd/boot/*.s)
 ZSRC  = $(wildcard src/smd/xgm/*.s80)
 # Resources
 # TODO: Include resources
-RSRC  = 
+RSRC  = $(wildcard res/*.c)
 
 # Objets files
-OBJS    = $(RSRC:.res=.o)
+OBJS    = $(RSRC:.c=.o)
 OBJS   += $(CSRC:.c=.o)
 OBJS   += $(SSRC:.s=.o)
 OBJS   += $(ZSRC:.s80=.o)

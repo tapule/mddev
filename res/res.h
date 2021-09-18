@@ -4,8 +4,21 @@
  * Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021 
  * Github: https://github.com/tapule/mddev
  *
- * File: sys.c
+ * File: res.h
  * ??
+ *
+ * ??
+ *
+ * More info:
+ * 
  */
 
-#include "sys.h"
+#ifndef RES_H
+#define RES_H
+
+#include "res_font.h"
+#include "res_img.h"
+#include "res_pal.h"
+#include "res_til.h"
+
+#endif // RES_H

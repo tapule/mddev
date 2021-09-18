@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT */
 /**
  * MDDev development kit
- * Copyright: 2020 Juan Ángel Moreno Fernández (@_tapule)
+ * Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021 
  * Github: https://github.com/tapule/mddev
  *
  * File: pad.c
@@ -12,18 +12,14 @@
 #include "z80.h"
 
 /* Gamepads data ports (DATAx) */
-static volatile uint8_t *const pad_data_port[3] = {
-    (uint8_t*) 0xA10003,
-    (uint8_t*) 0xA10005,
-    (uint8_t*) 0xA10007
- };
+#define PAD_1_DATA_PORT     ((volatile uint8_t *) 0xA10003)
+#define PAD_2_DATA_PORT     ((volatile uint8_t *) 0xA10005)
+#define PAD_EXP_DATA_PORT   ((volatile uint8_t *) 0xA10007)
 
 /* Gamepads control ports (CTRLx) */
-static volatile uint8_t *const pad_ctrl_port[3] = {
-    (uint8_t*) 0xA10009,
-    (uint8_t*) 0xA1000B,
-    (uint8_t*) 0xA1000D
- };
+#define PAD_1_CTRL_PORT     ((volatile uint8_t *) 0xA10009)
+#define PAD_2_CTRL_PORT     ((volatile uint8_t *) 0xA1000B)
+#define PAD_EXP_CTRL_PORT   ((volatile uint8_t *) 0xA1000D)
 
 /* Gamepads types for later accesses */
 static uint8_t pad_types[PAD_NUM] = {PAD_TYPE_UNKNOWN, PAD_TYPE_UNKNOWN};
@@ -62,12 +58,12 @@ void pad_init(void)
      *  
      */
     z80_bus_request_fast();
-    *pad_data_port[PAD_1] = 0x40;
-    *pad_ctrl_port[PAD_1] = 0x40;
-    *pad_data_port[PAD_2] = 0x40;
-    *pad_ctrl_port[PAD_2] = 0x40;
-    *pad_data_port[2] = 0x40;
-    *pad_ctrl_port[2] = 0x40;
+    *PAD_1_DATA_PORT = 0x40;
+    *PAD_1_CTRL_PORT = 0x40;
+    *PAD_2_DATA_PORT = 0x40;
+    *PAD_2_CTRL_PORT = 0x40;
+    *PAD_EXP_DATA_PORT = 0x40;
+    *PAD_EXP_CTRL_PORT = 0x40;
     z80_bus_release();
 }
 
@@ -80,46 +76,46 @@ void pad_update(void)
     /* 1st step read:
      * | ?| ?| C| B| R| L| D| U|
      */
-    *pad_data_port[PAD_1] = 0x40;
-    *pad_data_port[PAD_2] = 0x40;
+    *PAD_1_DATA_PORT = 0x40;
+    *PAD_2_DATA_PORT = 0x40;
     __asm__ volatile ("\tnop\n");
     __asm__ volatile ("\tnop\n");
-    pad_state[PAD_1] = *pad_data_port[PAD_1] & 0x3F;
-    pad_state[PAD_2] = *pad_data_port[PAD_2] & 0x3F;
+    pad_state[PAD_1] = *PAD_1_DATA_PORT & 0x3F;
+    pad_state[PAD_2] = *PAD_2_DATA_PORT & 0x3F;
     /* 2nd step read:
      * | ?| ?|St| A| 0| 0| D| U|
      */
-    *pad_data_port[PAD_1] = 0x00;
-    *pad_data_port[PAD_2] = 0x00;
+    *PAD_1_DATA_PORT = 0x00;
+    *PAD_2_DATA_PORT = 0x00;
     __asm__ volatile ("\tnop\n");
     __asm__ volatile ("\tnop\n");
     /* Rearrange into |St| A| C| B| R| L| D| U| */
-    pad_state[PAD_1] |= ((*pad_data_port[PAD_1] & 0x30) << 2);
-    pad_state[PAD_2] |= ((*pad_data_port[PAD_2] & 0x30) << 2);
+    pad_state[PAD_1] |= ((*PAD_1_DATA_PORT & 0x30) << 2);
+    pad_state[PAD_2] |= ((*PAD_2_DATA_PORT & 0x30) << 2);
     /* Steps 3rd, 4th and 5th:
      * Ignore results
      */
-    *pad_data_port[PAD_1] = 0x40;
-    *pad_data_port[PAD_2] = 0x40;
+    *PAD_1_DATA_PORT = 0x40;
+    *PAD_2_DATA_PORT = 0x40;
     __asm__ volatile ("\tnop\n");
     __asm__ volatile ("\tnop\n");
-    *pad_data_port[PAD_1] = 0x00;
-    *pad_data_port[PAD_2] = 0x00;
+    *PAD_1_DATA_PORT = 0x00;
+    *PAD_2_DATA_PORT = 0x00;
     __asm__ volatile ("\tnop\n");
     __asm__ volatile ("\tnop\n");
-    *pad_data_port[PAD_1] = 0x40;
-    *pad_data_port[PAD_2] = 0x40;
+    *PAD_1_DATA_PORT = 0x40;
+    *PAD_2_DATA_PORT = 0x40;
     __asm__ volatile ("\tnop\n");
     __asm__ volatile ("\tnop\n");
     /* 6th step read:
      * | ?| ?|St| A| 0| 0| 0| 0|
      * If bits 3-0 are 0 it's a 6-button gamepad, otherwhise it's a 3-button.
      */
-    *pad_data_port[PAD_1] = 0x00;
-    *pad_data_port[PAD_2] = 0x00;
+    *PAD_1_DATA_PORT = 0x00;
+    *PAD_2_DATA_PORT = 0x00;
     __asm__ volatile ("\tnop\n");
     __asm__ volatile ("\tnop\n");
-    if ((*pad_data_port[PAD_1] & 0x0F) != 0x00)
+    if ((*PAD_1_DATA_PORT & 0x0F) != 0x00)
     {
         pad_types[PAD_1] = PAD_TYPE_3BTN;
     }
@@ -129,12 +125,12 @@ void pad_update(void)
         /* 7th step read:
          * | ?| ?| C| B| Md| X| Y| Z|
         */
-        *pad_data_port[PAD_1] = 0x40;
+        *PAD_1_DATA_PORT = 0x40;
         __asm__ volatile ("\tnop\n");
         __asm__ volatile ("\tnop\n");
-        pad_state[PAD_1] |= ((*pad_data_port[PAD_1] & 0x0F) << 8);
+        pad_state[PAD_1] |= ((*PAD_1_DATA_PORT & 0x0F) << 8);
     }
-    if ((*pad_data_port[PAD_2] & 0x0F) != 0x00)
+    if ((*PAD_2_DATA_PORT & 0x0F) != 0x00)
     {
         pad_types[PAD_2] = PAD_TYPE_3BTN;
     }
@@ -144,10 +140,10 @@ void pad_update(void)
         /* 7th step read:
          * | ?| ?| C| B| Md| X| Y| Z|
         */
-        *pad_data_port[PAD_2] = 0x40;
+        *PAD_2_DATA_PORT = 0x40;
         __asm__ volatile ("\tnop\n");
         __asm__ volatile ("\tnop\n");
-        pad_state[PAD_2] |= ((*pad_data_port[PAD_2] & 0x0F) << 8);
+        pad_state[PAD_2] |= ((*PAD_2_DATA_PORT & 0x0F) << 8);
     }
     z80_bus_release();
     
@@ -168,7 +164,7 @@ bool pad_btn_state(const uint16_t pad, const uint16_t buttons)
     {
         return false;
     }
-    return(pad_state[pad] & buttons);
+    return (pad_state[pad] & buttons);
 }
 
 bool pad_btn_pressed(const uint16_t pad, const uint16_t buttons)
@@ -178,7 +174,7 @@ bool pad_btn_pressed(const uint16_t pad, const uint16_t buttons)
         return false;
     }
     /* Pressed this frame and not pressed last frame */
-    return ( (pad_state[pad] & buttons) && !(pad_state_old[pad] & buttons));
+    return ((pad_state[pad] & buttons) && !(pad_state_old[pad] & buttons));
  }
 
 bool pad_btn_released(const uint16_t pad, const uint16_t buttons)

@@ -1,24 +1,27 @@
 /* SPDX-License-Identifier: MIT */
 /**
  * MDDev development kit
- * Copyright: 2020 Juan Ángel Moreno Fernández (@_tapule)
+ * Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021 
  * Github: https://github.com/tapule/mddev
  *
  * File: header.s
  * Sega Megadrive/Genesis rom header
  * 
  * Comes after the m68k vector table and includes information related to the
- * current game
+ * current game.
  *
  * More info:
  * https://www.plutiedev.com/rom-header
  * https://blog.bigevilcorporation.co.uk/2012/02/28/sega-megadrive-1-getting-started
+ *
+ * Note:
+ * You must copy this file to your project as header.s and customize it.
  */
 
 .section .text.smdheader
 _smd_header:
     .ascii  "SEGA MEGA DRIVE "      /* 16B - Console name (Must start with "SEGA") */
-    .ascii  "TAPULE  2020.DEC"      /* 16B - Copyright and release date */
+    .ascii  "TAPULE  2021.DEC"      /* 16B - Copyright and release date */
     .ascii  "MDDev sample header                             " /* 48B - Domestic name */    
     .ascii  "MDDev sample header                             " /* 48B - International name */
     .ascii  "GM  MDDEV00-00"        /* 14B - Game type and product code */

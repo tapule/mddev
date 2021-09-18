@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT */
 /**
  * MDDev development kit
- * Copyright: 2020 Juan Ángel Moreno Fernández (@_tapule)
+ * Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021 
  * Github: https://github.com/tapule/mddev
  *
  * File: z80.c
@@ -11,20 +11,20 @@
 #include "z80.h"
 
 /* Z80 control ports */
-static volatile uint16_t *const z80_bus_port = (uint16_t *) 0xA11100;
-static volatile uint16_t *const z80_reset_port = (uint16_t *) 0xA11200;
+#define Z80_BUS_PORT    ((volatile uint16_t *) 0xA11100)
+#define Z80_RESET_PORT  ((volatile uint16_t *) 0xA11200)
 
 /* Z80 memory pointer and size (8KB) */
-static const uint8_t *const z80_ram_address = (uint8_t*) 0xA00000;
-static const uint16_t z80_ram_size = 0x2000;
+#define Z80_RAM_ADDRESS     ((uint8_t *) 0xA00000)
+#define Z80_RAM_SIZE        0x2000;
 
 static void z80_ram_clear(void)
 {
     /* We need a 0 byte, not a word */
     const uint8_t zero = 0;
 
-    uint8_t *dest = (uint8_t *) z80_ram_address;
-    uint16_t size = z80_ram_size;
+    uint8_t *dest = Z80_RAM_ADDRESS;
+    uint16_t size = Z80_RAM_SIZE;
 
     /* We must access the Z80 RAM using bytes, words won't work */
     while(size--)
@@ -49,41 +49,41 @@ void z80_reset(void)
     uint16_t wait = 0x20;
 
     /* Assert the z80 reset line */
-    *z80_reset_port = 0x000;
+    *Z80_RESET_PORT = 0x000;
     /* We need to wait a while until the reset is done */
     while(wait--)
     {
     }
     /* Release the z80 reset line */    
-    *z80_reset_port = 0x100;
+    *Z80_RESET_PORT = 0x100;
 }
 
 void z80_bus_request(void)
 {
     /* Request the bus */
-    *z80_bus_port = 0x100;
+    *Z80_BUS_PORT = 0x100;
     /* If there is a reset process, force it to end now */
-    *z80_reset_port = 0x100;
+    *Z80_RESET_PORT = 0x100;
     /* Wait until the bus is free */
-    while(*z80_bus_port & 0x100)
+    while(*Z80_BUS_PORT & 0x100)
     {
     }
 }
 
-void z80_bus_request_fast(void)
+inline void z80_bus_request_fast(void)
 {
-    *z80_bus_port = 0x100;
+    *Z80_BUS_PORT = 0x100;
 }
 
-void z80_bus_release(void)
+inline void z80_bus_release(void)
 {
-    *z80_bus_port = 0x000;
+    *Z80_BUS_PORT = 0x000;
 }
 
 void z80_program_load(const uint8_t *src, uint16_t size)
 {
     /* Copy program to the start of z80 internal RAM */
-    uint8_t *dest = (uint8_t *) z80_ram_address;
+    uint8_t *dest = Z80_RAM_ADDRESS;
 
     z80_bus_request();
 

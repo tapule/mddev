@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT */
 /**
  * MDDev development kit
- * Copyright: 2020 Juan Ángel Moreno Fernández (@_tapule)
+ * Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021 
  * Github: https://github.com/tapule/mddev
  *
  * File: interrupts.s
@@ -20,8 +20,15 @@
  _int_hblank:
     rte
 
+/**
+ * @brief Handler for the vertical blank interrupt
+ * 
+ * This handler is called whenever a 
+ * 
+ */
 .global _int_vblank
  _int_vblank:
+    st.b    (vid_vblank_flag)
     rte
 
 .global _int_unhandled

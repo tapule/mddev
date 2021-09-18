@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT */
 /**
  * MDDev development kit
- * Copyright: 2020 Juan Ángel Moreno Fernández (@_tapule)
+ * Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021 
  * Github: https://github.com/tapule/mddev
  *
  * File: smd.ld
@@ -39,11 +39,11 @@ __DYNAMIC  =  0;
  * .                    .
  * .                    .
  * +--------------------+ <- 0x00FF0000
- * | .data              | Initialized data goes here
+ * | .data              | initialised data goes here
  * |        _sdata      | Must be copied at boot time
  * |        _edata      |
  * +--------------------+
- * | .bss               | Uninitialized data goes here
+ * | .bss               | Uninitialised data goes here
  * |        _sbss       | Must be cleared at boot time
  * |        _ebss       | Start of heap, used by sbrk()
  * +--------------------+
@@ -115,7 +115,7 @@ SECTIONS
     _rodata_size = SIZEOF (.rodata);
 
     /*
-     * .data output section: Read-write initialized global and static data
+     * .data output section: Read-write initialised global and static data
      * 0xFF0000 is the VMA (Virtual Memory Address): Address where this section
      * would be during execution.
      * ADDR (.text) + SIZEOF (.text) is the LMA (Load Memory Address): Address
@@ -134,9 +134,9 @@ SECTIONS
     _data_size = SIZEOF (.data);
 
     /*
-     * .bss output section: Read-write Uninitialized data
+     * .bss output section: Read-write Uninitialised data
      * It would be placed at runtime just after .data section.
-     * This data has to be initialized to zero at boot time!!
+     * This data has to be initialised to zero at boot time!!
      */
     .bss 0xFF0000 + SIZEOF (.data) :
     {

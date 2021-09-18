@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT */
 /**
  * MDDev development kit
- * Copyright: 2020 Juan Ángel Moreno Fernández (@_tapule)
+ * Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021 
  * Github: https://github.com/tapule/mddev
  *
  * File: psg.c
@@ -12,7 +12,7 @@
 #include "psg.h"
 
 /* PSG port from the m68k side */
-static volatile uint8_t *const psg_port = (uint8_t*) 0xC00011;
+#define PSG_PORT ((volatile uint8_t *) 0xC00011)
 
 void psg_init(void)
 {
@@ -22,13 +22,13 @@ void psg_init(void)
     for (i = 0; i < 4; ++i)
     {
         /* Set volume (attenuation) to 15 which is silence */
-        *psg_port = 0x90 | (i << 5) | 0x0F;
+        *PSG_PORT = 0x90 | (i << 5) | 0x0F;
 
         /* 
          * Set frecuency (pitch) to 0
          * Changing the pitch requires writing two bytes to the PSG port
          */
-        *psg_port = 0x80 | (i << 5) | 0x00;
-        *psg_port = 0x00;
+        *PSG_PORT = 0x80 | (i << 5) | 0x00;
+        *PSG_PORT = 0x00;
     }
 }

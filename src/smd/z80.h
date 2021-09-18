@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT */
 /**
  * MDDev development kit
- * Copyright: 2020 Juan Ángel Moreno Fernández (@_tapule)
+ * Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021 
  * Github: https://github.com/tapule/mddev
  *
  * File: z80.h
@@ -20,9 +20,9 @@
 #include <stdint.h>
 
 /**
- * @brief Initializes the z80 CPU.
+ * @brief initialises the z80 CPU.
  * 
- * Controls the initialization process of the z80 CPU. It reset the z80 and
+ * Controls the initialisation process of the z80 CPU. It reset the z80 and
  * performs an internal RAM clear.
  * 
  * @note This function is called from the boot process so maybe you don't need
@@ -74,4 +74,4 @@ void z80_bus_release(void);
  */
 void z80_program_load(const uint8_t *src, uint16_t size);
 
-#endif // Z80_H
+#endif /* Z80_H */
