@@ -79,17 +79,18 @@ OUTASM = $(addprefix obj/, $(ASM))
 
 .PHONY: all release asm debug tools
 
-all: tools release
+all: release
+#all: tools release
 
 # Release target including optimizations
 release: EXFLAGS  = -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fshort-enums
 release: EXFLAGS += -fomit-frame-pointer -flto -fuse-linker-plugin
-release: EXFLAGS += -fno-unwind-tables
+release: EXFLAGS += -fno-unwind-tables -DNDEBUG
 # release: EXFLAGS += -Wno-shift-negative-value -Wno-main -Wno-unused-parameter -fno-builtin
 release: bin/rom.bin obj/symbol.txt
 
 # Debug target, enables GDB tracing for Blastem, GensKMod, etc.
-debug: EXFLAGS = -g -Og -DDEBUG -DKDEBUG
+debug: EXFLAGS = -g -Og -DDEBUG
 debug: bin/rom.bin obj/symbol.txt
 
 # ASM output target. Generates asm listings

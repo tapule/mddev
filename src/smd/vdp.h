@@ -75,6 +75,14 @@
 #define VDP_REG_DMASRC_L        0x9500      /* DMA source (low) */
 #define VDP_REG_DMASRC_M        0x9600      /* DMA source (mid) */
 #define VDP_REG_DMASRC_H        0x9700      /* DMA source (high) */
+/*
+ * Extended KMod VDP registers.
+ * Gens KMod adds 3 extended virtual register to the VDP. These registers are
+ * really useful on emulators for debugging purpouses.
+ */
+#define VDP_REG_KMOD_CONTROL    0x9D00      /* Emulator control functions */
+#define VDP_REG_KMOD_MESSAGE    0x9E00      /* Emulator message output  */
+#define VDP_REG_KMOD_TIMER      0x9F00      /* Emulator timer functions */
 
 /*
  * Base commands for the control port to do writes to the different VDP's rams
