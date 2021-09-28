@@ -46,7 +46,7 @@ LIBS     = -L$(MARSDEV)/m68k-elf/lib/gcc/m68k-elf/$(GCC_VER) -lgcc
 #LIBS    += -L$(MARSDEV)/m68k-elf/m68k-elf/lib -lnosys
 
 # Default base flags
-CCFLAGS  = -m68000 -Wall -Wextra -std=c99 -ffreestanding
+CCFLAGS  = -m68000 -Wall -Wextra -std=c17 -ffreestanding
 ASFLAGS  = -m68000 --register-prefix-optional
 LDFLAGS  = -T src/smd/smd.ld -nostdlib
 Z80FLAGS = -isrc/smd/xgm
@@ -77,9 +77,10 @@ OUTOBJS = $(addprefix obj/, $(OBJS))
 ASM    = $(CSRC:.c=.lst)
 OUTASM = $(addprefix obj/, $(ASM))
 
-.PHONY: all release asm debug
+.PHONY: all release asm debug tools
 
 all: release
+#all: tools release
 
 # Release target including optimizations
 release: EXFLAGS  = -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fshort-enums
@@ -138,6 +139,10 @@ obj/symbol.txt: bin/rom.bin
 	@echo "-> Exporting symbol table..."
 	$(NM) --plugin=$(PLUGIN)/$(LTO_SO) -n bin/rom.elf > obj/symbol.txt
 
+tools:
+	@echo "-> Building tools..."
+	@make -C tools
+
 .PHONY: run drun clean 
 
 run: release
@@ -153,5 +158,5 @@ drun: debug
 clean:
 	@echo "-> Cleaning project..."
 	@rm -rf obj
-	@rm -f bin/rom.elf bin/unpad.bin
-
+	@rm -f bin/rom.elf bin/unpad.bin bin/rom.bin
+	@make -C tools clean

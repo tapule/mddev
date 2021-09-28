@@ -33,6 +33,7 @@ int main()
     plane_hline_draw(PLANE_A, text, 2, 6, size, false);
     
     vid_display_enable();
+    kdebug_alert("Iniciando cuerpo principal");
     while (1)
     {
         pad_update();
@@ -40,6 +41,9 @@ int main()
         /* Check press button  */
         if (pad_btn_pressed(PAD_1, PAD_BTN_A))
         {
+            kdebug_alert("Boton A: Start timer");
+            kdebug_timer_start();
+
             //vid_display_disable();
             pal_primary_set(PAL_0_INDEX, RES_PAL_PLAYER_SIZE, res_pal_player);
             pal_primary_set(PAL_1_INDEX, RES_PAL_COLLECTIBLES_SIZE, res_pal_collectibles);            
@@ -53,11 +57,18 @@ int main()
         /* Check press button  */        
         if (pad_btn_pressed(PAD_1, PAD_BTN_B))
         {
-            plane_clear(PLANE_A);
-            plane_clear(PLANE_B);
+            kdebug_alert("Boton B: Output timer");
+            kdebug_timer_output();
+
+            //plane_clear(PLANE_A);
+            //plane_clear(PLANE_B);
         }
         if (pad_btn_pressed(PAD_1, PAD_BTN_C))
         {
+            kdebug_alert("Boton C: Stop timer and halt");
+            kdebug_timer_stop();
+            kdebug_halt();
+
             vid_background_color_set(color);
             ++color;
             //if (!pal_is_fading())
@@ -80,7 +91,6 @@ int main()
         vid_vsync_wait();
         pal_update();
         dma_queue_flush();
-
     }
 }
 

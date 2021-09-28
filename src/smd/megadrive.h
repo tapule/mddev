@@ -27,7 +27,7 @@
 #include "tiles.h"
 #include "plane.h"
 #include "text.h"
-
+#include "kdebug.h"
 
 
 /**
