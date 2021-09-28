@@ -27,7 +27,7 @@ static void z80_ram_clear(void)
     uint16_t size = Z80_RAM_SIZE;
 
     /* We must access the Z80 RAM using bytes, words won't work */
-    while(size--)
+    while (size--)
     {
         *dest = zero; 
         ++dest;
@@ -51,7 +51,7 @@ void z80_reset(void)
     /* Assert the z80 reset line */
     *Z80_RESET_PORT = 0x000;
     /* We need to wait a while until the reset is done */
-    while(wait--)
+    while (wait--)
     {
     }
     /* Release the z80 reset line */    
@@ -64,8 +64,8 @@ void z80_bus_request(void)
     *Z80_BUS_PORT = 0x100;
     /* If there is a reset process, force it to end now */
     *Z80_RESET_PORT = 0x100;
-    /* Wait until the bus is free */
-    while(*Z80_BUS_PORT & 0x100)
+    /* The bus is busy until it retuns a 0x100 so we wait for it */
+    while (*Z80_BUS_PORT & 0x100)
     {
     }
 }
@@ -80,6 +80,15 @@ inline void z80_bus_release(void)
     *Z80_BUS_PORT = 0x000;
 }
 
+bool z80_is_bus_free(void)
+{
+    if (*Z80_BUS_PORT & 0x100)
+    {
+        return true;
+    }
+    return false;
+}
+
 void z80_program_load(const uint8_t *src, uint16_t size)
 {
     /* Copy program to the start of z80 internal RAM */
@@ -87,7 +96,7 @@ void z80_program_load(const uint8_t *src, uint16_t size)
 
     z80_bus_request();
 
-    while(size--)
+    while (size--)
     {
         *dest = *src; 
         ++dest;

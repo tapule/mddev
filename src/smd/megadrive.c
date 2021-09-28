@@ -20,6 +20,8 @@ void smd_init(void)
     pad_init();
     /* Initialises the PSG (Programmable Sound Generator) */
     psg_init();
+    /* Initialises the Yamaha YM2612 FM sound chip */
+    ym2612_init();
     /* Initialises the graphics  */
     vid_init();
     /* Initialises the pseudo-random number generator */

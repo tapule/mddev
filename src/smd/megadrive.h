@@ -19,6 +19,7 @@
 #include "z80.h"
 #include "pad.h"
 #include "psg.h"
+#include "ym2612.h"
 #include "video.h"
 #include "rand.h"
 #include "dma.h"

@@ -57,13 +57,13 @@ bin/
 *.code*
 .vscode
 
-# Resources source data
-res-src/
-
 # WIP data
 wip/
 doc-wip/
 res-src-wip/
+
+# Resources source data
+res-src/
 
 # Mame history dir
 history/

@@ -18,6 +18,7 @@
 #define Z80_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 /**
  * @brief initialises the z80 CPU.
@@ -62,6 +63,13 @@ void z80_bus_request_fast(void);
  * again.
  */
 void z80_bus_release(void);
+
+/**
+ * @brief Checks if the z80 is halted and the bus is free
+ * 
+ * @return true if we own the bus, false if z80 is the owner
+ */
+bool z80_is_bus_free(void);
 
 /**
  * @brief Load a new program on the z80.
