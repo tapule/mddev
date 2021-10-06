@@ -18,6 +18,7 @@
  *
  * More info:
  * https://www.smspower.org/maxim/Documents/YM2612
+ * https://www.chibiakumas.com/68000/platform3.php
  * https://www.plutiedev.com/ym2612-operations
  */
 

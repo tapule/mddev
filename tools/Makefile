@@ -8,9 +8,9 @@
 # Tools main makefile compiler script
 #
 
-.PHONY: all paltool tilesettool tileimagetool clean
+.PHONY: all paltool tilesettool tileimagetool bintos clean
 
-all: paltool tilesettool tileimagetool
+all: paltool tilesettool tileimagetool bintos
 
 paltool:
 	@echo "-> Building paltool..."
@@ -24,9 +24,14 @@ tileimagetool:
 	@echo "-> Building tileimagetool..."
 	@make -C tileimagetool
 
+bintos:
+	@echo "-> Building bintos..."
+	@make -C bintos
+
 clean:
 	@echo "-> Cleaning tools..."
 	@make -C paltool clean
 	@make -C tilesettool clean
 	@make -C tileimagetool clean
+	@make -C bintos clean
 

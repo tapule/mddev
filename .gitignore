@@ -70,3 +70,6 @@ history/
 
 # header.s
 src/smd/boot/header.s
+
+# xgm .h file
+src/smd/xgm/z80_xgm.h

@@ -64,7 +64,7 @@ const char version_text [] =
     "paltool v0.02\n"
     "Sega Megadrive/Genesis palette converter\n"
     "Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021\n"
-    "Github: https://github.com/tapule/md-customtools\n";
+    "Github: https://github.com/tapule/mddev\n";
 
 const char help_text [] =
     "usage: paltool [options] [-s] SRC_DIR -[p] DEST_DIR -[n] BASE_NAME\n"
@@ -326,7 +326,7 @@ bool build_header_file(const char *path, const char *name,
     /* An information message */
     fprintf(h_file, "/* Generated with paltool v0.02                     */\n");
     fprintf(h_file, "/* a Sega Megadrive/Genesis palette converter       */\n");
-    fprintf(h_file, "/* Github: https://github.com/tapule/md-customtools */\n\n");
+    fprintf(h_file, "/* Github: https://github.com/tapule/mddev          */\n\n");
 
     /* Header include guard */
     strcpy(buff, name);

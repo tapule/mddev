@@ -26,7 +26,7 @@ ASMZ80   = $(TOOLSBIN)/sjasm
 
 # Tools
 # TODO: Include tools to manage resources etc.
-BINTOS  = $(TOOLSBIN)/bintos
+BINTOS  = bin/bintos
 BLASTEM = $(MARSDEV)/blastem/blastem
 
 # Some files needed are in a versioned directory
@@ -94,8 +94,11 @@ debug: EXFLAGS = -g -Og -DDEBUG
 debug: bin/rom.bin obj/symbol.txt
 
 # ASM output target. Generates asm listings
-asm: EXFLAGS  = -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
-asm: EXFLAGS += -fshort-enums
+#asm: EXFLAGS  = -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
+#asm: EXFLAGS += -fshort-enums
+asm: EXFLAGS  = -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fshort-enums
+asm: EXFLAGS += -fomit-frame-pointer -fuse-linker-plugin
+asm: EXFLAGS += -fno-unwind-tables -DNDEBUG
 asm: $(OUTASM)
 
 bin/rom.elf: $(OUTOBJS)
@@ -126,6 +129,7 @@ obj/%.lst: %.c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CCFLAGS) $(EXFLAGS) $(INCS) -S -c $< -o $@
 
+# XGM Compilation
 %.o80: %.s80
 	$(ASMZ80) $(Z80FLAGS) $< $@ obj/z80out.lst
 
@@ -159,4 +163,4 @@ clean:
 	@echo "-> Cleaning project..."
 	@rm -rf obj
 	@rm -f bin/rom.elf bin/unpad.bin bin/rom.bin
-	@make -C tools clean
+	# @make -C tools clean

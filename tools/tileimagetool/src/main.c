@@ -73,7 +73,7 @@ const char version_text [] =
     "tileimagetool v0.01\n"
     "A Sega Megadrive/Genesis tile image extractor\n"
     "Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021\n"
-    "Github: https://github.com/tapule/md-customtools\n";
+    "Github: https://github.com/tapule/mddev\n";
 
 const char help_text [] =
     "usage: tileimagetool [options] [-s] SRC_DIR -[p] DEST_DIR -[n] BASE_NAME\n"
@@ -648,7 +648,7 @@ bool build_header_file(const char *path, const char *name,
     /* An information message */
     fprintf(h_file, "/* Generated with tileimagetool v0.01                    */\n");
     fprintf(h_file, "/* A Sega Megadrive/Genesis tile image extractor         */\n");
-    fprintf(h_file, "/* Github: https://github.com/tapule/md-customtools      */\n\n");
+    fprintf(h_file, "/* Github: https://github.com/tapule/mddev               */\n\n");
 
     /* Header include guard */
     strcpy(buff, name);
