@@ -2,11 +2,15 @@
 #include "vram.h"
 #include "smd/megadrive.h"
 #include "../res/res.h"
+//#include "smd/z80.h"
+//#include "smd/xgm/z80_xgm.h"
+
 
 int main()
 {
     uint8_t color = 1;
  
+    //z80_program_load(z80_xgm, Z80_XGM_SIZE);
     smd_ints_enable();
     
     tiles_load_fast(res_font_sys, VRAM_INDEX_FONT, RES_FONT_SYS_SIZE);

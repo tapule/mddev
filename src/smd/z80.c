@@ -89,19 +89,25 @@ bool z80_is_bus_free(void)
     return false;
 }
 
-void z80_program_load(const uint8_t *src, uint16_t size)
+void z80_data_load(const uint8_t *src, const uint16_t dest, uint16_t size)
 {
-    /* Copy program to the start of z80 internal RAM */
-    uint8_t *dest = Z80_RAM_ADDRESS;
-
-    z80_bus_request();
+    /* Copy data to the correct offset in bytes */
+    volatile uint8_t *_dest = Z80_RAM_ADDRESS + dest;
 
     while (size--)
     {
-        *dest = *src; 
-        ++dest;
+        *_dest = *src; 
+        ++_dest;
         ++src;
     }
+}
+
+void z80_program_load(const uint8_t *src, uint16_t size)
+{
+    z80_bus_request();
+
+    /* Copy program to the start of z80 internal RAM */
+    z80_data_load(src, 0, size);
 
     z80_reset();
     z80_bus_release();    

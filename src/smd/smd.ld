@@ -95,24 +95,17 @@ SECTIONS
 
         /* Put all .text input section of all files here */
         *(.text.*) *(.text)
+    	/* . = ALIGN(0x4); */
         /* Define tag _etext at the end of this section */
         _etext = .;        
-    } > rom
-    _text_size = SIZEOF (.text);
 
-    /*
-     * .rodata output section: Read only data, global variables marked as const
-     * and string constants.
-     */
-    .rodata :
-    AT ( ADDR (.text) + SIZEOF (.text) )
-    {
+		/* Read only data: global vars marked as const and string constants */
         _srodata = .;
-        *(.rodata .rodata.*)
         *(.lit)
+        *(.rodata .rodata.*)
         _erodata = .;        
     } > rom
-    _rodata_size = SIZEOF (.rodata);
+    _text_size = SIZEOF (.text);
 
     /*
      * .data output section: Read-write initialised global and static data

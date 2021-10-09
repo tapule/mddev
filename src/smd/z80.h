@@ -72,6 +72,20 @@ void z80_bus_release(void);
 bool z80_is_bus_free(void);
 
 /**
+ * @brief Load a chunk of data on the z80.
+ * 
+ * Uploads data to the z80 internal RAM.
+ * 
+ * @param src   Pointer to the source data.
+ * @param dest  z80 RAM destination offset
+ * @param size  Size in bytes of our data chunk.
+ * 
+ * @note This function does not request the bus, so be aware that it is a bit
+ * unsafe if you don't manage the bus request/release in advance.
+ */
+void z80_data_load(const uint8_t *src, const uint16_t dest, uint16_t size);
+
+/**
  * @brief Load a new program on the z80.
  * 
  * Uploads a program to the z80 internal RAM and reset it to start running the
@@ -80,6 +94,6 @@ bool z80_is_bus_free(void);
  * @param src   Pointer to the source program data.
  * @param size  Size in bytes of our program data.
  */
-void z80_program_load(const uint8_t *src, uint16_t size);
+void z80_program_load(const uint8_t *restrict src, uint16_t size);
 
 #endif /* Z80_H */

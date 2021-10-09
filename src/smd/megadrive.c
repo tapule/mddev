@@ -22,6 +22,8 @@ void smd_init(void)
     psg_init();
     /* Initialises the Yamaha YM2612 FM sound chip */
     ym2612_init();
+    /* Initialises the XGM based sound engine */
+    sound_init();
     /* Initialises the graphics  */
     vid_init();
     /* Initialises the pseudo-random number generator */
