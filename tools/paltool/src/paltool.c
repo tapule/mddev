@@ -4,26 +4,28 @@
  * Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021 
  * Github: https://github.com/tapule/mddev
  *
- * paltool v0.02
+ * paltool v0.03
  *
  * Sega Megadrive/Genesis palette converter
  *
  * Convert indexed png files up to 64 colors to Sega Megadrive/Genesis palette
  * format.
  *
- * Usage example: paltool -s pngs/path -p . -n res_pal
+ * Usage example: paltool -s pngs/path -d dest/path -n res_pal
  * 
  * It extracts all palettes in "pngs/path/*.png" and generates the C source
- * files "base_name.h" and "base_name.c" in "dest/path" directory.
+ * files "res_pal.h" and "res_pal.c" in "dest/path" directory.
  * For each png file, paltool adds a define with its size in colors and a const
  * uint16_t array containing the palette color data.
  * 
- * If -p parameter is not specified, the current directory will be used as
+ * If -s parameter is not specified, the current directory will be used as
+ * source folder.
+ * If -d parameter is not specified, the current directory will be used as
  * destination folder.
  * 
  * If "mypal.png" is in "pngs/path" the previos example usage generates:
  * 
- * res_pal.h
+ * dest/path/res_pal.h
  * #ifndef RES_PAL_H
  * #define RES_PAL_H
  *
@@ -35,7 +37,7 @@
  *
  * #endif // RES_PAL_H
  * 
- * res_pal.c
+ * dest/path/res_pal.c
  * #include "res_pal.h"
  *
  * const uint16_t res_pal_mypal[RES_PAL_MYPAL_SIZE] = {
@@ -43,6 +45,9 @@
  *    0x0888, 0x008E, 0x02AE, 0x0CCC, 0x0EE8, 0x0AEE, 0x0EEE
  * };
  *
+ * You can convert a unique file too:
+ *  paltool -s pngs/path/file.png -d dest/path -n res_pal
+ * 
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,29 +65,38 @@
 #define MAX_FILE_NAME_LENGTH    128     /* Max length for file names */
 #define MAX_PATH_LENGTH         1024    /* Max length for paths */
 
+#define PARAMS_ERROR            0   /* Error en procesado de parámetros */
+#define PARAMS_STOP             1   /* Procesado de parámetros ok, finalizar */
+#define PARAMS_CONTINUE         2   /* Procesado de parámetros ok, procesar */
+
 const char version_text [] =
-    "paltool v0.02\n"
+    "paltool v0.03\n"
     "Sega Megadrive/Genesis palette converter\n"
     "Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021\n"
     "Github: https://github.com/tapule/mddev\n";
 
 const char help_text [] =
-    "usage: paltool [options] [-s] SRC_DIR -[p] DEST_DIR -[n] BASE_NAME\n"
+    "Usage: paltool [options]\n"
     "\n"
     "Options:\n"
-    "  -v, --version       show version information and exit\n"
-    "  -h, --help          show this help message and exit\n"
-    "  -s SRC_DIR          use SRC_DIR to search png files to extract palettes\n"
-    "  -p DEST_DIR         use DEST_DIR to save generated C source files\n"
+    "  -v, --version       Show version information and exit\n"
+    "  -h, --help          Show this help message and exit\n"
+    "  -s <path>|<file>    Use a directory path to look for png files\n"
+    "                      or a unique png file to extract palettes from"
+    "                      Current directory will be used as default\n"
+    "  -d <path>           Use a path to save generated C source files\n"
     "                      The current directory will be used as default\n"
-    "  -n BASE_NAME        use BASE_NAME as prefix for files, defines, vars, etc\n";
+    "  -n <name>           Use name as prefix for files, defines, vars, etc\n"
+    "                      If it is not specified, \"pal\" will be used as\n"
+    "                      default for multiple files. Source file name itself\n"
+    "                      will be used if there is only one source file\n";
 
 /* Stores the input parameters */
 typedef struct params_t
 {
-    const char *src_path;   /* Folder with the source palettes in png files */
-    const char *dest_path;  /* Destination folder for the generated .h and .c */
-    const char *dest_name;  /* Base name for the generated .h and .c files */
+    char *src_path;   /* Folder with the source palettes in png files */
+    char *dest_path;  /* Destination folder for the generated .h and .c */
+    char *dest_name;  /* Base name for the generated .h and .c files */
 } params_t;
 
 /* Stores palette's data */
@@ -121,9 +135,11 @@ void strtoupper(char *str)
  * @param argc Input arguments counter
  * @param argv Input arguments vector
  * @param params Where to store the input paramss
- * @return True if the arguments parse was ok, false otherwise
+ * @return 0 if there was an error
+ *         1 if the arguments parse was ok but we must end (-v or -h) 
+ *         2 if the arguments parse was ok and we can continue
  */
-bool parse_params(uint32_t argc, char** argv, params_t *params)
+uint8_t parse_params(uint32_t argc, char** argv, params_t *params)
 {
     uint32_t i;
  
@@ -133,12 +149,12 @@ bool parse_params(uint32_t argc, char** argv, params_t *params)
         if ((strcmp(argv[i], "-v") == 0) || (strcmp(argv[i], "--version") == 0))
         {
             fputs(version_text, stdout);
-            return true;
+            return PARAMS_STOP;
         }
         else if ((strcmp(argv[i], "-h") == 0) || (strcmp(argv[i], "--help") == 0))
         {
             fputs(help_text, stdout);
-            return true;
+            return PARAMS_STOP;
         }
         /* Source path where palette files are */
         else if (strcmp(argv[i], "-s") == 0)
@@ -152,11 +168,11 @@ bool parse_params(uint32_t argc, char** argv, params_t *params)
             {
                 fprintf(stderr, "%s: an argument is needed for this option: '%s'\n",
                         argv[0], argv[i]);
-                return false;
+                return PARAMS_ERROR;
             }
         }
         /* Destination path to save the generated .h and .c files */
-        else if (strcmp(argv[i], "-p") == 0)
+        else if (strcmp(argv[i], "-d") == 0)
         {
             if (i < argc - 1)
             {
@@ -167,7 +183,7 @@ bool parse_params(uint32_t argc, char** argv, params_t *params)
             {
                 fprintf(stderr, "%s: an argument is needed for this option: '%s'\n",
                         argv[0], argv[i]);
-                return false;
+                return PARAMS_ERROR;
             }
         }
         /* Base name for variables, defines, and  generated .h and .c files */
@@ -182,12 +198,17 @@ bool parse_params(uint32_t argc, char** argv, params_t *params)
             {
                 fprintf(stderr, "%s: an argument is needed for this option: '%s'\n",
                         argv[0], argv[i]);
-                return false;
+                return PARAMS_ERROR;
             }
         }
+        else 
+        {
+            fprintf(stderr, "%s: unknown option: '%s'\n", argv[0], argv[i]);
+            return PARAMS_ERROR;
+        }           
         ++i;
     }
-    return true;
+    return PARAMS_CONTINUE;
 }
 
 /**
@@ -303,20 +324,23 @@ uint32_t palette_read(const char* path, const char *file,
  * 
  * @param path Destinatio path for the .h file
  * @param name Base name for the .h file (name + .h)
+ * @param use_prefix Indicate if a prefix should be used for vars, etc.
  * @param palette_count Number of palettes to process from the global palettes
  * @return true if everythig was correct, false otherwise
  */
 bool build_header_file(const char *path, const char *name,
-                       const uint32_t palette_count)
+                       const bool use_prefix, const uint32_t palette_count)
 {
     FILE *h_file;
     char buff[1024];
     uint32_t i, j;
 
+    /* Builds the .h complete file path */
     strcpy(buff, path);
     strcat(buff, "/");
     strcat(buff, name);
     strcat(buff, ".h");
+
     h_file = fopen(buff, "w");
     if (!h_file)
     {
@@ -324,7 +348,7 @@ bool build_header_file(const char *path, const char *name,
     }
 
     /* An information message */
-    fprintf(h_file, "/* Generated with paltool v0.02                     */\n");
+    fprintf(h_file, "/* Generated with paltool v0.03                     */\n");
     fprintf(h_file, "/* a Sega Megadrive/Genesis palette converter       */\n");
     fprintf(h_file, "/* Github: https://github.com/tapule/mddev          */\n\n");
 
@@ -339,8 +363,12 @@ bool build_header_file(const char *path, const char *name,
     /* Palette sizes defines */
     for (i = 0; i < palette_count; ++i)
     {
-        strcpy(palettes[i].size_define, name);
-        strcat(palettes[i].size_define, "_");
+        palettes[i].size_define[0] = '\0';
+        if (use_prefix)
+        {
+            strcpy(palettes[i].size_define, name);
+            strcat(palettes[i].size_define, "_");
+        }        
         strcat(palettes[i].size_define, palettes[i].name);
         strcat(palettes[i].size_define, "_SIZE");
         strtoupper(palettes[i].size_define);
@@ -352,8 +380,12 @@ bool build_header_file(const char *path, const char *name,
     /* Palette declarations */   
     for (i = 0; i < palette_count; ++i)
     {
-        strcpy(buff, name);
-        strcat(buff, "_");
+        buff[0] = '\0';
+        if (use_prefix)
+        {
+            strcpy(buff, name);
+            strcat(buff, "_");
+        }
         strcat(buff, palettes[i].name);
         fprintf(h_file, "extern const uint16_t %s[%s];\n", buff,
                 palettes[i].size_define);
@@ -375,21 +407,25 @@ bool build_header_file(const char *path, const char *name,
  * 
  * @param path Destinatio path for the .c file
  * @param name Base name for the .c file (name + .c)
+ * @param use_prefix Indicate if a prefix should be used for files, vars, etc.
  * @param palette_count Number of palettes to process from the global palettes
  * @return true if everythig was correct, false otherwise
  */
 bool build_source_file(const char *path, const char *name,
-                       const uint32_t palette_count)
+                       const bool use_prefix, const uint32_t palette_count)
 {
     FILE *c_file;
     char buff[1024];
     uint32_t i;
     uint32_t j;
+    uint8_t line_feed;    
 
+    /* Builds the .c complete file path */
     strcpy(buff, path);
     strcat(buff, "/");
     strcat(buff, name);
     strcat(buff, ".c");
+
     c_file = fopen(buff, "w");
     if (!c_file)
     {
@@ -401,27 +437,34 @@ bool build_source_file(const char *path, const char *name,
     strcat(buff, ".h");
     fprintf(c_file, "#include \"%s\"\n\n", buff);
 
+    /* How many values we write per line */
+    line_feed = 9;
+
     /* Palette definitions */
     for (i = 0; i < palette_count; ++i)
     {
-        strcpy(buff, name);
-        strcat(buff, "_");
+        buff[0] = '\0';
+        if (use_prefix)
+        {
+            strcpy(buff, name);
+            strcat(buff, "_");
+        }        
         strcat(buff, palettes[i].name);
         fprintf(c_file, "const uint16_t %s[%s] = {", buff,
                 palettes[i].size_define);
         for (j = 0; j < palettes[i].size; ++j)
         {
-            /* Every 8 hex colors, add a line feed */
-            if (j % 8 == 0)
-            {
-                fprintf(c_file, "\n    ");
-            }
-            fprintf(c_file, "0x%04X", palettes[i].colors[j]);
-            /* If we aren't done, add a separator*/
-            if (j + 1 < palettes[i].size)
+            /* Do we need to write a comma after the las value? */
+            if (j)
             {
                 fprintf(c_file, ", ");
             }
+            /* Every line_feed written values, add a line feed */
+            if (j % line_feed == 0)
+            {
+                fprintf(c_file, "\n    ");
+            }            
+            fprintf(c_file, "0x%04X", palettes[i].colors[j]);
         }
         fprintf(c_file, "\n};\n\n");
     }
@@ -435,59 +478,107 @@ int main(int argc, char **argv)
     params_t params = {0};
     uint32_t palette_index = 0;
     DIR *dir;
+    char *file_name;    
     struct dirent *dir_entry;
+    uint8_t params_status;    
+
+    /* Set default values here */
+    params.src_path = ".";
+    params.dest_path = ".";
 
     /* Argument reading and processing */
-    if (!parse_params(argc, argv, &params))
+    params_status = parse_params(argc, argv, &params);
+    if (params_status == PARAMS_ERROR)
     {
         return EXIT_FAILURE;
     }
-    if (!params.src_path)
+    if (params_status == PARAMS_STOP)
     {
-        fprintf(stderr, "%s: no source path specified\n", argv[0]);
-        return EXIT_FAILURE;
+        return EXIT_SUCCESS;
     }
-    if (!params.dest_path)
-    {
-        /* If no destination path especified, use the current dir */
-        params.dest_path = ".";
-    }
-    if (!params.dest_name)
-    {
-        fprintf(stderr, "%s: no destination name specified\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-
-    /* Source palettes folder reading */
+ 
+    /* First try to open source path as a directory */
     dir = opendir(params.src_path);
-    if (dir == NULL)
+    if (dir != NULL)
     {
-        return EXIT_FAILURE;
-    }
-    printf(version_text);
-    printf("\nReading files...\n");
-    while ((dir_entry = readdir(dir)) != NULL)
-    {
-        /* Process only regular files */
-        if (dir_entry->d_type == DT_REG)
+        printf(version_text);
+        printf("\nReading files...\n");
+        while ((dir_entry = readdir(dir)) != NULL)
         {
-            if (!palette_read(params.src_path, dir_entry->d_name, palette_index))
+            /* Checks max allowed palettes */
+            if (palette_index >= MAX_PALETTES)
             {
-                printf("\tPng file to pal: %s -> %s\n", dir_entry->d_name,
-                       palettes[palette_index].name);
-                ++palette_index;
+                closedir(dir);
+                fprintf(stderr, "Error: More than %d files in the source directory\n", MAX_PALETTES);
+                return EXIT_FAILURE;
+            }
+            /* Process only regular files */
+            if (dir_entry->d_type == DT_REG)
+            {
+                if (!palette_read(params.src_path, dir_entry->d_name, palette_index))
+                {
+                    printf("\tPng file to pal: %s -> %s\n", dir_entry->d_name,
+                        palettes[palette_index].name);
+                    ++palette_index;
+                }
             }
         }
+        closedir(dir);        
     }
+    /* We can't open source path as directory, try to open it as file instead */
+    else
+    {
+        /* Get the file name and path */
+        file_name = strrchr(params.src_path, '/');
+        if (file_name)
+        {
+            *file_name = '\0';
+            ++file_name;
+        }
+        else
+        {
+            file_name = params.src_path;
+            params.src_path = ".";
+        }
+        printf(version_text);
+        printf("\nReading file...\n");
+        if (!palette_read(params.src_path, file_name, palette_index))
+        {
+            printf("\tFile to binary: %s -> %s\n", file_name, 
+                palettes[palette_index].name);
+            ++palette_index;
+        }
+    }
+
     printf("%d palettes readed.\n", palette_index);
-    closedir(dir);
 
     if (palette_index > 0)
     {
+        /* By default use BASE_NAME as prefix for files, defines, vars, etc */
+        bool use_prefix = true;
+
+        /* Adjust the destination base name if it was not specified */
+        if (!params.dest_name)
+        {
+            /* Only one file, use its name as base name and no prefix */
+            if (palette_index == 1)
+            {
+                params.dest_name = palettes[0].name;
+                use_prefix = false;
+            }
+            /* More than one file, use "bins" as base name */
+            else
+            {
+                params.dest_name = "pal";
+            }
+        }
+
         printf("Building C header file...\n");
-        build_header_file(params.dest_path, params.dest_name, palette_index);
+        build_header_file(params.dest_path, params.dest_name, use_prefix,
+                          palette_index);
         printf("Building C source file...\n");
-        build_source_file(params.dest_path, params.dest_name, palette_index);
+        build_source_file(params.dest_path, params.dest_name, use_prefix,
+                          palette_index);
         printf("Done.\n");
     }
 

@@ -4,29 +4,31 @@
  * Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021 
  * Github: https://github.com/tapule/mddev
  *
- * tileimagetool v0.01
+ * tileimagetool v0.02
  *
  * A Sega Megadrive/Genesis tile image extractor
  *
  * Extracts Sega Megadrive/Genesis image tiles from 8bpp indexed png files up to
  * 16 colors.
  *
- * Usage example: tileimagetool -s pngs/path -p . -n res_img
+ * Usage example: tileimagetool -s pngs/path -d dest/path -n res_img
  * 
  * It processes images in "pngs/path/*.png" to extract tiles and to build a tile
- * image drawable in a plane. It generates the C source files "base_name.h" and
- * "base_name.c" in "dest/path" directory.
+ * image drawable in a plane. It generates the C source files "res_img.h" and
+ * "res_img.c" in "dest/path" directory.
  * For each png file, tileimagetool adds a define with its dimensions in tiles,
  * a define with its tileset size, a const uint16_t array containing the plane
  * tiles properties and a const uint32_t array containing the tileset data (one
  * tile a row).
  * 
- * If -p parameter is not specified, the current directory will be used as
+ * If -s parameter is not specified, the current directory will be used as
+ * source folder.
+ * If -d parameter is not specified, the current directory will be used as
  * destination folder.
  * 
  * If "myimg.png" is in "pngs/path" the previos example usage generates:
  * 
- * res_img.h
+ * dest/path/res_img.h
  * #ifndef RES_IMG_H
  * #define RES_IMG_H
  *
@@ -41,7 +43,7 @@
  *
  * #endif // RES_IMG_H
  * 
- * res_img.c
+ * dest/path/res_img.c
  * #include "res_img.h"
  *
  * const uint16_t res_img_myimg[RES_IMG_MYIMG_WIDTH * RES_IMG_MYIMG_HEIGHT] = {
@@ -69,29 +71,38 @@
 #define MAX_FILE_NAME_LENGTH    128     /* Max length for file names */
 #define MAX_PATH_LENGTH         1024    /* Max length for paths */
 
+#define PARAMS_ERROR            0   /* Error en procesado de parámetros */
+#define PARAMS_STOP             1   /* Procesado de parámetros ok, finalizar */
+#define PARAMS_CONTINUE         2   /* Procesado de parámetros ok, procesar */
+
 const char version_text [] =
-    "tileimagetool v0.01\n"
+    "tileimagetool v0.02\n"
     "A Sega Megadrive/Genesis tile image extractor\n"
     "Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021\n"
     "Github: https://github.com/tapule/mddev\n";
 
 const char help_text [] =
-    "usage: tileimagetool [options] [-s] SRC_DIR -[p] DEST_DIR -[n] BASE_NAME\n"
+    "usage: tileimagetool [options]\n"
     "\n"
     "Options:\n"
-    "  -v, --version       show version information and exit\n"
-    "  -h, --help          show this help message and exit\n"
-    "  -s SRC_DIR          use SRC_DIR to search png files to extract images\n"
-    "  -p DEST_DIR         use DEST_DIR to save generated C source files\n"
+    "  -v, --version       Show version information and exit\n"
+    "  -h, --help          Show this help message and exit\n"
+    "  -s <path>|<file>    Use a directory path to look for png files\n"
+    "                      or a unique png file to extract images from"
+    "                      Current directory will be used as default\n"
+    "  -d <path>           Use a path to save generated C source files\n"
     "                      The current directory will be used as default\n"
-    "  -n BASE_NAME        use BASE_NAME as prefix for files, defines, vars, etc\n";
+    "  -n <name>           Use name as prefix for files, defines, vars, etc\n"
+    "                      If it is not specified, \"img\" will be used as\n"
+    "                      default for multiple files. Source file name itself\n"
+    "                      will be used if there is only one source file\n";
 
 /* Stores the input parameters */
 typedef struct params_t
 {
-    const char *src_path;   /* Folder with the source images in png files */
-    const char *dest_path;  /* Destination folder for the generated .h and .c */
-    const char *dest_name;  /* Base name for the generated .h and .c files */
+    char *src_path;   /* Folder with the source images in png files */
+    char *dest_path;  /* Destination folder for the generated .h and .c */
+    char *dest_name;  /* Base name for the generated .h and .c files */
 } params_t;
 
 /* Stores tileset's data */
@@ -425,9 +436,11 @@ bool plane_image_extract(uint8_t *image, const uint32_t width,
  * @param argc Input arguments counter
  * @param argv Input arguments vector
  * @param params Where to store the input paramss
- * @return True if the arguments parse was ok, false otherwise
+ * @return 0 if there was an error
+ *         1 if the arguments parse was ok but we must end (-v or -h) 
+ *         2 if the arguments parse was ok and we can continue
  */
-bool parse_params(uint32_t argc, char** argv, params_t *params)
+uint8_t parse_params(uint32_t argc, char** argv, params_t *params)
 {
     uint32_t i;
  
@@ -437,12 +450,12 @@ bool parse_params(uint32_t argc, char** argv, params_t *params)
         if ((strcmp(argv[i], "-v") == 0) || (strcmp(argv[i], "--version") == 0))
         {
             fputs(version_text, stdout);
-            return true;
+            return PARAMS_STOP;
         }
         else if ((strcmp(argv[i], "-h") == 0) || (strcmp(argv[i], "--help") == 0))
         {
             fputs(help_text, stdout);
-            return true;
+            return PARAMS_STOP;
         }
         /* Source path where png files are */
         else if (strcmp(argv[i], "-s") == 0)
@@ -456,11 +469,11 @@ bool parse_params(uint32_t argc, char** argv, params_t *params)
             {
                 fprintf(stderr, "%s: an argument is needed for this option: '%s'\n",
                         argv[0], argv[i]);
-                return false;
+                return PARAMS_ERROR;
             }
         }
         /* Destination path to save the generated .h and .c files */
-        else if (strcmp(argv[i], "-p") == 0)
+        else if (strcmp(argv[i], "-d") == 0)
         {
             if (i < argc - 1)
             {
@@ -471,7 +484,7 @@ bool parse_params(uint32_t argc, char** argv, params_t *params)
             {
                 fprintf(stderr, "%s: an argument is needed for this option: '%s'\n",
                         argv[0], argv[i]);
-                return false;
+                return PARAMS_ERROR;
             }
         }
         /* Base name for variables, defines, and  generated .h and .c files */
@@ -486,12 +499,17 @@ bool parse_params(uint32_t argc, char** argv, params_t *params)
             {
                 fprintf(stderr, "%s: an argument is needed for this option: '%s'\n",
                         argv[0], argv[i]);
-                return false;
+                return PARAMS_ERROR;
             }
         }
+        else 
+        {
+            fprintf(stderr, "%s: unknown option: '%s'\n", argv[0], argv[i]);
+            return PARAMS_ERROR;
+        }           
         ++i;
     }
-    return true;
+    return PARAMS_CONTINUE;
 }
 
 /**
@@ -625,20 +643,23 @@ uint32_t image_read(const char* path, const char *file,
  * 
  * @param path Destinatio path for the .h file
  * @param name Base name for the .h file (name + .h)
+ * @param use_prefix Indicate if a prefix should be used for vars, etc.
  * @param image_count Number of images to process from the global image storage
  * @return true if everythig was correct, false otherwise
  */
 bool build_header_file(const char *path, const char *name,
-                       const uint32_t image_count)
+                       const bool use_prefix, const uint32_t image_count)
 {
     FILE *h_file;
     char buff[1024];
     uint32_t i, j;
 
+    /* Builds the .h complete file path */
     strcpy(buff, path);
     strcat(buff, "/");
     strcat(buff, name);
     strcat(buff, ".h");
+
     h_file = fopen(buff, "w");
     if (!h_file)
     {
@@ -646,7 +667,7 @@ bool build_header_file(const char *path, const char *name,
     }
 
     /* An information message */
-    fprintf(h_file, "/* Generated with tileimagetool v0.01                    */\n");
+    fprintf(h_file, "/* Generated with tileimagetool v0.02                    */\n");
     fprintf(h_file, "/* A Sega Megadrive/Genesis tile image extractor         */\n");
     fprintf(h_file, "/* Github: https://github.com/tapule/mddev               */\n\n");
 
@@ -662,8 +683,12 @@ bool build_header_file(const char *path, const char *name,
     for (i = 0; i < image_count; ++i)
     {
         /* BASENAME_IMAGENAME */
-        strcpy(images[i].width_define, name);
-        strcat(images[i].width_define, "_");
+        images[i].width_define[0] = '\0';
+        if (use_prefix)
+        {
+            strcpy(images[i].width_define, name);
+            strcat(images[i].width_define, "_");
+        }          
         strcat(images[i].width_define, images[i].name);
         strtoupper(images[i].width_define);
         /* Copy to height and tileset size */
@@ -691,8 +716,12 @@ bool build_header_file(const char *path, const char *name,
     /* Images and tilesets declarations */   
     for (i = 0; i < image_count; ++i)
     {
-        strcpy(buff, name);
-        strcat(buff, "_");
+        buff[0] = '\0';
+        if (use_prefix)
+        {
+            strcpy(buff, name);
+            strcat(buff, "_");
+        }        
         strcat(buff, images[i].name);
         fprintf(h_file, "extern const uint16_t %s[%s * %s];\n", buff,
                 images[i].width_define, images[i].height_define);
@@ -719,11 +748,12 @@ bool build_header_file(const char *path, const char *name,
  * 
  * @param path Destinatio path for the .c file
  * @param name Base name for the .c file (name + .c)
+ * @param use_prefix Indicate if a prefix should be used for files, vars, etc.
  * @param image_count Number of images to process from the global image storage
  * @return true if everythig was correct, false otherwise
  */
 bool build_source_file(const char *path, const char *name,
-                       const uint32_t image_count)
+                       const bool use_prefix, const uint32_t image_count)
 {
     FILE *c_file;
     char buff[1024];
@@ -731,11 +761,14 @@ bool build_source_file(const char *path, const char *name,
     uint32_t tile;      /* Current tile to process */
     uint32_t row;       /* Current row */
     uint32_t column;    /* Current column */
+    uint8_t line_feed; 
 
+    /* Builds the .c complete file path */
     strcpy(buff, path);
     strcat(buff, "/");
     strcat(buff, name);
     strcat(buff, ".c");
+
     c_file = fopen(buff, "w");
     if (!c_file)
     {
@@ -747,11 +780,18 @@ bool build_source_file(const char *path, const char *name,
     strcat(buff, ".h");
     fprintf(c_file, "#include \"%s\"\n\n", buff);
 
+    /* How many values we write per line */
+    line_feed = 9;
+
     for (image = 0; image < image_count; ++image)
     {
+        buff[0] = '\0';
+        if (use_prefix)
+        {
+            strcpy(buff, name);
+            strcat(buff, "_");
+        }          
         /* Writes the plane image definition */
-        strcpy(buff, name);
-        strcat(buff, "_");
         strcat(buff, images[image].name);
         fprintf(c_file, "const uint16_t %s[%s * %s] = {", buff,
                 images[image].width_define, images[image].height_define);
@@ -782,6 +822,11 @@ bool build_source_file(const char *path, const char *name,
 
         for (tile = 0; tile < images[image].tileset.size; ++tile)
         {
+            /* Do we need to write a comma after the las value? */
+            if (tile)
+            {
+                fprintf(c_file, ", ");
+            }            
             /* Separate tile definition from text line start */
             fprintf(c_file, "\n    ");
             /* Writes all the tile rows in a single line */
@@ -799,11 +844,6 @@ bool build_source_file(const char *path, const char *name,
                     fprintf(c_file, ", ");
                 }
             }
-            /* If we aren't done, add a separator at end of the last tile row */
-            if (tile + 1 < images[image].tileset.size)
-            {
-                fprintf(c_file, ",");
-            }
         }
         fprintf(c_file, "\n};\n\n");
     }
@@ -817,59 +857,109 @@ int main(int argc, char **argv)
     params_t params = {0};
     uint32_t image_index = 0;
     DIR *dir;
+    char *file_name;     
     struct dirent *dir_entry;
+    uint8_t params_status;     
+
+    /* Set default values here */
+    params.src_path = ".";
+    params.dest_path = ".";
 
     /* Argument reading and processing */
-    if (!parse_params(argc, argv, &params))
+    params_status = parse_params(argc, argv, &params);
+    if (params_status == PARAMS_ERROR)
     {
         return EXIT_FAILURE;
     }
-    if (!params.src_path)
+    if (params_status == PARAMS_STOP)
     {
-        fprintf(stderr, "%s: no source path specified\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-    if (!params.dest_path)
-    {
-        /* If no destination path especified, use the current dir */
-        params.dest_path = ".";
-    }
-    if (!params.dest_name)
-    {
-        fprintf(stderr, "%s: no destination name specified\n", argv[0]);
-        return EXIT_FAILURE;
+        return EXIT_SUCCESS;
     }
 
-    /* Source png images folder reading */
+    /* First try to open source path as a directory */
     dir = opendir(params.src_path);
-    if (dir == NULL)
+    if (dir != NULL)
     {
-        return EXIT_FAILURE;
-    }
-    printf(version_text);
-    printf("\nReading files...\n");
-    while ((dir_entry = readdir(dir)) != NULL)
-    {
-        /* Process only regular files */
-        if (dir_entry->d_type == DT_REG)
+        printf(version_text);
+        printf("\nReading files...\n");
+        while ((dir_entry = readdir(dir)) != NULL)
         {
-            if (!image_read(params.src_path, dir_entry->d_name, image_index))
+            /* Checks max allowed images */
+            if (image_index >= MAX_IMAGES)
             {
-                printf("\tPng file to plane image: %s -> %s\n", dir_entry->d_name, 
-                       images[image_index].name);
-                ++image_index;
+                closedir(dir);
+                fprintf(stderr, "Error: More than %d files in the source directory\n", MAX_IMAGES);
+                return EXIT_FAILURE;
+            }
+            
+            /* Process only regular files */
+            if (dir_entry->d_type == DT_REG)
+            {
+                if (!image_read(params.src_path, dir_entry->d_name, image_index))
+                {
+                    printf("\tPng file to plane image: %s -> %s\n", dir_entry->d_name, 
+                        images[image_index].name);
+                    ++image_index;
+                }
             }
         }
+        closedir(dir);
     }
+    /* We can't open source path as directory, try to open it as file instead */
+    else
+    {
+        /* Get the file name and path */
+        file_name = strrchr(params.src_path, '/');
+        if (file_name)
+        {
+            *file_name = '\0';
+            ++file_name;
+        }
+        else
+        {
+            file_name = params.src_path;
+            params.src_path = ".";
+        }
+        printf(version_text);
+        printf("\nReading file...\n");
+        if (!image_read(params.src_path, file_name, image_index))
+        {
+            printf("\tFile to binary: %s -> %s\n", file_name, 
+                images[image_index].name);
+            ++image_index;
+        }
+    }
+
     printf("%d images readed.\n", image_index);
-    closedir(dir);
+    
 
     if (image_index > 0)
     {
+        /* By default use BASE_NAME as prefix for files, defines, vars, etc */
+        bool use_prefix = true;
+
+        /* Adjust the destination base name if it was not specified */
+        if (!params.dest_name)
+        {
+            /* Only one file, use its name as base name and no prefix */
+            if (image_index == 1)
+            {
+                params.dest_name = images[0].name;
+                use_prefix = false;
+            }
+            /* More than one file, use "bins" as base name */
+            else
+            {
+                params.dest_name = "img";
+            }
+        }
+
         printf("Building C header file...\n");
-        build_header_file(params.dest_path, params.dest_name, image_index);
+        build_header_file(params.dest_path, params.dest_name, use_prefix,
+                          image_index);
         printf("Building C source file...\n");
-        build_source_file(params.dest_path, params.dest_name, image_index);
+        build_source_file(params.dest_path, params.dest_name, use_prefix,
+                          image_index);
         printf("Done.\n");
     }
 

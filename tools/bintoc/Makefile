@@ -1,15 +1,13 @@
 # SPDX-License-Identifier: MIT
 #
-# SGKD
-# Coded by: Stephane Dallongeville
-# Github: https://github.com/Stephane-D/SGDK
-# Modified version by: Juan Ángel Moreno Fernández (@_tapule) 2021
+# MDDev development kit
+# Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021
 # Github: https://github.com/tapule/mddev
 #
-# bintos a binary to m68k assembler resource converter
+# bintoc a binary to C language resource converter
 #
 # Makefile
-# bintos compiler makefile script
+# bintoc compiler makefile script
 #
 
 # MDDev bin dir
@@ -30,12 +28,12 @@ OBJS  = $(CSRC:.c=.o)
 all: release
 
 release: EXFLAGS  = -O3
-release: bintos
+release: bintoc
 
 debug: EXFLAGS = -g -Og -DDEBUG
-debug: bintos
+debug: bintoc
 
-bintos: $(OBJS)
+bintoc: $(OBJS)
 	@mkdir -p $(MDDEVBIN)
 	$(CC) $(LDFLAGS) -o $(MDDEVBIN)/$@ $(OBJS)
 
@@ -44,5 +42,5 @@ src/%.o: src/%.c
 
 clean:
 	@rm -f src/*.o
-	@rm -f $(MDDEVBIN)/bintos
+	@rm -f $(MDDEVBIN)/bintoc
 

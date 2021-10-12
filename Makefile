@@ -26,7 +26,8 @@ ASMZ80   = $(TOOLSBIN)/sjasm
 
 # Tools
 # TODO: Include tools to manage resources etc.
-BINTOS  = bin/bintos
+# BINTOS  = bin/bintos
+BINTOC  = bin/bintoc
 BLASTEM = $(MARSDEV)/blastem/blastem
 
 # Some files needed are in a versioned directory
@@ -60,8 +61,11 @@ CSRC += $(wildcard src/smd/*.c)
 SSRC  = $(wildcard src/*.s)
 SSRC += $(wildcard src/smd/*.s)
 SSRC += $(wildcard src/smd/boot/*.s)
+SSRC += $(wildcard res/*.s)
+
 # Z80 source for XGM driver
-ZSRC  = $(wildcard src/smd/xgm/*.s80)
+# ZSRC  = $(wildcard src/smd/xgm/*.s80)
+
 # Resources
 # TODO: Include resources
 RSRC  = $(wildcard res/*.c)
@@ -70,7 +74,7 @@ RSRC  = $(wildcard res/*.c)
 OBJS    = $(RSRC:.c=.o)
 OBJS   += $(CSRC:.c=.o)
 OBJS   += $(SSRC:.s=.o)
-OBJS   += $(ZSRC:.s80=.o)
+# OBJS   += $(ZSRC:.s80=.o)
 OUTOBJS = $(addprefix obj/, $(OBJS))
 
 # ASM listings
@@ -87,7 +91,7 @@ release: EXFLAGS  = -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fshort-enums
 release: EXFLAGS += -fomit-frame-pointer -flto -fuse-linker-plugin
 release: EXFLAGS += -fno-unwind-tables -DNDEBUG
 # release: EXFLAGS += -Wno-shift-negative-value -Wno-main -Wno-unused-parameter -fno-builtin
-release: bin/rom.bin obj/symbol.txt
+release: bin/rom.bin obj/symbol.txt 
 
 # Debug target, enables GDB tracing for Blastem, GensKMod, etc.
 debug: EXFLAGS = -g -Og -DDEBUG
@@ -129,12 +133,19 @@ obj/%.lst: %.c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CCFLAGS) $(EXFLAGS) $(INCS) -S -c $< -o $@
 
-# XGM Compilation
-%.o80: %.s80
-	$(ASMZ80) $(Z80FLAGS) $< $@ obj/z80out.lst
+# %.o80: %.s80
+#	$(ASMZ80) $(Z80FLAGS) $< $@ obj/z80out.lst
+#
+# %.s: %.o80
+#	$(BINTOS) $<
 
-%.s: %.o80
-	$(BINTOS) $<
+# This objective compiles the XGM z80 sound driver and converts it to C sources
+xgm:
+	@echo "-> Building XGM sound driver..."
+	@mkdir -p obj/src/smd/xgm
+	$(ASMZ80) $(Z80FLAGS) src/smd/xgm/z80_xgm.s80 obj/src/smd/xgm/z80_xgm.o80 obj/z80out.lst
+	$(BINTOC) -s obj/src/smd/xgm/z80_xgm.o80 -d src/smd -t u8
+
 
 # This generates a symbol table that is very helpful in debugging crashes,
 # even with an optimized release build!

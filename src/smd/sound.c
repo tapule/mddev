@@ -13,7 +13,7 @@
 #include "sound.h"
 #include "z80.h"
 #include "null_data.h"
-#include "xgm/z80_xgm.h"
+#include "z80_xgm.h"
 #include "kdebug.h"
 
 /* 
