@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include "vram.h"
-#include "smd/megadrive.h"
-#include "../res/res.h"
+#include "mddev.h"
+#include "../../res/res.h"
 //#include "smd/z80.h"
 //#include "smd/xgm/z80_xgm.h"
 
@@ -61,9 +61,7 @@ int main()
         /* Check press button  */        
         if (pad_btn_pressed(PAD_1, PAD_BTN_B))
         {
-            kdebug_alert("Boton B: Output timer");
-            kdebug_timer_output();
-
+            kdebug_alert("Calling init");
             //plane_clear(PLANE_A);
             //plane_clear(PLANE_B);
         }
@@ -93,6 +91,7 @@ int main()
         //dma_queue_vsram_transfer(data, 0, 2, 2);
 
         vid_vsync_wait();
+        //??? sound_update();
         pal_update();
         dma_queue_flush();
     }

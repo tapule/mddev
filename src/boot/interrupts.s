@@ -28,6 +28,10 @@
  */
 .global _int_vblank
  _int_vblank:
+
+    /* Here should be whatever you wanted to do in the vinterrupt */
+ 
+    /* Set the vblak flag to 1 to indicate that the interrupt is finished  */
     st.b    (vid_vblank_flag)
     rte
 

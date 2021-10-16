@@ -4,38 +4,22 @@
  * Coded by: Juan Ángel Moreno Fernández (@_tapule) 2021 
  * Github: https://github.com/tapule/mddev
  *
- * File: megadrive.h
- * Sega Megadrive/Genesis main control unit
+ * File: sys.h
+ * ??
  *
  * System core routines to manage the Sega Megadrive/Genesis hardware
  *
- */
-
-#ifndef MEGADRIVE_H
-#define MEGADRIVE_H
-
-#include "config.h"
-
-#include "z80.h"
-#include "pad.h"
-#include "psg.h"
-#include "ym2612.h"
-#include "sound.h"
-#include "video.h"
-#include "rand.h"
-#include "dma.h"
-#include "pal.h"
-#include "tiles.h"
-#include "plane.h"
-#include "text.h"
-#include "kdebug.h"
-
-
-/**
- * @brief 
+ * More info:
  * 
  */
-void smd_init(void);
+
+#ifndef SYS_H
+#define SYS_H
+
+#include <stdint.h>
+
+//void sys_interrupts_enable(void);
+//void sys_interrupts_disable(void);
 
 /**
  * @brief Habilita las interrupciones
@@ -67,4 +51,4 @@ uint16_t smd_ints_status(void);
 */
 
 
-#endif /* MEGADRIVE_H */
+#endif /* SYS_H */

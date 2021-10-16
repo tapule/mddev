@@ -75,6 +75,7 @@ skip_copy:
      * Use this section for software initialisation.
      * Put here whatever you need before main starts
      */
+     
     /* initialise the Sega Megadrive/Genesis hardware */
     bsr smd_init
 

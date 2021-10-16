@@ -38,7 +38,7 @@ PLUGIN   = $(MARSDEV)/m68k-elf/libexec/gcc/m68k-elf/$(GCC_VER)
 LTO_SO   = liblto_plugin.so
 
 # Includes: Local + GCC (+ Newlib, uncomment to use it)
-INCS     = -Isrc -Ismd -Ires
+INCS     = -Isrc -Ires -Isrc/tests
 INCS    += -I$(MARSDEV)/m68k-elf/lib/gcc/m68k-elf/$(GCC_VER)/include
 #INCS   += -I$(MARSDEV)/m68k-elf/m68k-elf/include
 
@@ -49,22 +49,22 @@ LIBS     = -L$(MARSDEV)/m68k-elf/lib/gcc/m68k-elf/$(GCC_VER) -lgcc
 # Default base flags
 CCFLAGS  = -m68000 -Wall -Wextra -std=c17 -ffreestanding
 ASFLAGS  = -m68000 --register-prefix-optional
-LDFLAGS  = -T src/smd/smd.ld -nostdlib
-Z80FLAGS = -isrc/smd/xgm
+LDFLAGS  = -T src/smd.ld -nostdlib
+Z80FLAGS = -isrc/xgm
 
 # Extra flags set by debug or release target as needed
 EXFLAGS  = 
 
 # Sources
 CSRC  = $(wildcard src/*.c)
-CSRC += $(wildcard src/smd/*.c)
-SSRC  = $(wildcard src/*.s)
-SSRC += $(wildcard src/smd/*.s)
-SSRC += $(wildcard src/smd/boot/*.s)
+CSRC += $(wildcard src/tests/*.c)
+SSRC =  $(wildcard src/boot/*.s)
+SSRC += $(wildcard src/*.s)
+SSRC += $(wildcard src/tests/*.s)
 SSRC += $(wildcard res/*.s)
 
 # Z80 source for XGM driver
-# ZSRC  = $(wildcard src/smd/xgm/*.s80)
+# ZSRC  = $(wildcard src/xgm/*.s80)
 
 # Resources
 # TODO: Include resources
@@ -142,9 +142,9 @@ obj/%.lst: %.c
 # This objective compiles the XGM z80 sound driver and converts it to C sources
 xgm:
 	@echo "-> Building XGM sound driver..."
-	@mkdir -p obj/src/smd/xgm
-	$(ASMZ80) $(Z80FLAGS) src/smd/xgm/z80_xgm.s80 obj/src/smd/xgm/z80_xgm.o80 obj/z80out.lst
-	$(BINTOC) -s obj/src/smd/xgm/z80_xgm.o80 -d src/smd -t u8
+	@mkdir -p obj/src/xgm
+	$(ASMZ80) $(Z80FLAGS) src/xgm/z80_xgm.s80 obj/src/xgm/z80_xgm.o80 obj/z80out.lst
+	$(BINTOC) -s obj/src/xgm/z80_xgm.o80 -d src -t u8
 
 
 # This generates a symbol table that is very helpful in debugging crashes,
