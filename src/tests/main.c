@@ -31,11 +31,12 @@ int main()
     plane_hline_draw(PLANE_A, text, 2, 2, size, false);
     size = text_render("FINALLY IT WRITES TEXT ON SCREEN!!", text);
     plane_hline_draw(PLANE_A, text, 2, 4, size, false);
+    /*
 
     text_pal_set(PAL_0);
     text_nrender("THIS", text + 18, 4);
     plane_hline_draw(PLANE_A, text, 2, 6, size, false);
-    
+    */
     vid_display_enable();
     kdebug_alert("Iniciando cuerpo principal");
     while (1)
@@ -61,9 +62,26 @@ int main()
         /* Check press button  */        
         if (pad_btn_pressed(PAD_1, PAD_BTN_B))
         {
-            kdebug_alert("Calling init");
-            //plane_clear(PLANE_A);
-            //plane_clear(PLANE_B);
+            if (smd_is_pal())
+            {
+                size = text_render("PAL MODE ", text);
+                plane_hline_draw(PLANE_A, text, 2, 6, size, false);                
+            }
+            else
+            {
+                size = text_render("NTSC MODE", text);
+                plane_hline_draw(PLANE_A, text, 2, 6, size, false);                
+            }
+            if (smd_is_japanese())
+            {
+                size = text_render("DOMESTIC MODE", text);
+                plane_hline_draw(PLANE_A, text, 2, 8, size, false);                
+            }
+            else
+            {
+                size = text_render("OVERSEAS MODE", text);
+                plane_hline_draw(PLANE_A, text, 2, 8, size, false);                
+            }
         }
         if (pad_btn_pressed(PAD_1, PAD_BTN_C))
         {

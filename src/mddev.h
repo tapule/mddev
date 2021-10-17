@@ -45,5 +45,4 @@
  */
 void smd_init(void);
 
-
 #endif /* MDDEV_H */

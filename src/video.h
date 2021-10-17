@@ -133,14 +133,10 @@ void vid_plane_size_set(const vid_plane_size_t size);
  */
 void vid_autoinc_set(const uint8_t increment);
 
+
 /*
     * TODO:
     vid_hilightshadow_set
-
-    * MAYBE THESE SHOULD BE IN MD (SYS)
-    bool vid_is_pal(void);
-    bool vid_is_ntsc(void);
-
 
 */
 

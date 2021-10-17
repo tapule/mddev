@@ -68,8 +68,5 @@ res-src/
 # Mame history dir
 history/
 
-# Tests header.s
-src/tests/header.s
-
 # XGM C driver
 src/z80_xgm.*

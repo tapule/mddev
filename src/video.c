@@ -142,4 +142,3 @@ inline void vid_autoinc_set(const uint8_t increment)
 {
     *VDP_PORT_CTRL_W = VDP_REG_AUTOINC | increment;
 }
-
