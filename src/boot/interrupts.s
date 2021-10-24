@@ -23,14 +23,17 @@
 /**
  * @brief Handler for the vertical blank interrupt
  * 
- * This handler is called whenever a 
+ * This handler is called whenever a ...
  * 
  */
 .global _int_vblank
  _int_vblank:
 
     /* Here should be whatever you wanted to do in the vinterrupt */
- 
+
+    /* XGM synchronisation proccess */
+    bsr sound_update
+
     /* Set the vblak flag to 1 to indicate that the interrupt is finished  */
     st.b    (vid_vblank_flag)
     rte

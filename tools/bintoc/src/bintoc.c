@@ -45,7 +45,7 @@
  * dest/path/res_bin.c
  * #include "res_bin.h"
  *
- * _Aling(16) const uint8_t res_bin_myfile[RES_BIN_MYFILE_SIZE] = {
+ * _Alingas(16) const uint8_t res_bin_myfile[RES_BIN_MYFILE_SIZE] = {
  *    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 
  *    0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x40, 
  *    0x04, 0x03, 0x00, 0x00, 0x00, 0x58, 0x47, 0x6C, 0xED, 0x00, 0x00, 0x29, 
@@ -530,7 +530,7 @@ bool build_source_file(const char *path, const char *name, const char *data_type
         /* Add alignment if there was any */
         if (memory_align > 1)
         {
-            fprintf(c_file, "_Align(%d) ", memory_align);
+            fprintf(c_file, "_Alignas(%d) ", memory_align);
         }
         fprintf(c_file, "const %s %s[%s] = {", data_type, buff,
                 files[i].size_define);

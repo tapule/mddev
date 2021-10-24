@@ -67,7 +67,7 @@ void z80_bus_release(void);
 /**
  * @brief Checks if the z80 is halted and the bus is free
  * 
- * @return true if we own the bus, false if z80 is the owner
+ * @return True if we own the bus, false if z80 is the owner
  */
 bool z80_is_bus_free(void);
 

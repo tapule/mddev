@@ -20,6 +20,8 @@
 #include "res_img.h"
 #include "res_pal.h"
 #include "res_til.h"
+#include "res_sfx.h"
+#include "sfx.h"
 
 
 #endif // RES_H

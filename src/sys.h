@@ -38,7 +38,7 @@ void smd_ints_disable(void);
 /**
  * @brief Get interrupts status
  * 
- * @return true if interrupts are enabled, false otherwise
+ * @return True if interrupts are enabled, false otherwise
  */
 bool smd_ints_status(void);
 
@@ -48,7 +48,7 @@ bool smd_ints_status(void);
  * The Sega Megadrive/Genesis can run in PAL mode with a clock of 7.60 MHz or in
  * NTSC with a clock of 7.67 MHz.
  * 
- * @return true if the system is in PAL mode, false if it is running in NTSC
+ * @return True if the system is in PAL mode, false if it is running in NTSC
  */
 bool smd_is_pal(void);
 
@@ -58,7 +58,7 @@ bool smd_is_pal(void);
  * The Sega Megadrive/Genesis can run in Domestic mode (Japanese) or in Overseas
  * mode (US or European).
  * 
- * @return true if the system is running in Japasese mode or false if it is
+ * @return True if the system is running in Japasese mode or false if it is
  *         running in US/European mode
  */
 bool smd_is_japanese(void);
