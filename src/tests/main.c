@@ -6,9 +6,13 @@
 
 int main()
 {
-    uint16_t text[41];
+    uint16_t text[128];
     uint16_t size;
- 
+    uint16_t status = 0;
+    uint16_t song = 0;
+    uint16_t sfx = 0;
+
+
     smd_ints_disable();
     
     tiles_load_fast(res_font_sys, VRAM_INDEX_FONT, RES_FONT_SYS_SIZE);
@@ -25,14 +29,12 @@ int main()
     plane_hline_draw(PLANE_A, text, 2, 2, size, false);
 
     z80_bus_request();
-        //sound_sfx_set(64, door, RES_SFX_DOOR_SIZE);
-        //sound_sfx_set(65, spit, RES_SFX_SPIT_SIZE);
-
-        //sound_sfx_set(64, res_sfx_door, RES_SFX_DOOR_SIZE);
-        //sound_sfx_set(65, res_sfx_spit, RES_SFX_SPIT_SIZE);
-        sound_sfx_set(64, sfx_snd_death14, SFX_SND_DEATH14_SIZE);
-        sound_sfx_set(65, sfx_snd_death14b, SFX_SND_DEATH14B_SIZE);
+        sound_sfx_set(64, res_sfx_door, RES_SFX_DOOR_SIZE);
+        sound_sfx_set(65, res_sfx_spit, RES_SFX_SPIT_SIZE);
+        sound_sfx_set(66, sfx_snd_death14, SFX_SND_DEATH14_SIZE);
     z80_bus_release();
+
+    sound_music_play(mus_credits);
 
     smd_ints_enable();
     vid_display_enable();
@@ -44,36 +46,80 @@ int main()
         /* Check press button  */
         if (pad_btn_pressed(PAD_1, PAD_BTN_A))
         {
-            kdebug_alert("Boton A: Start sound 64");
-            size = text_render("SOUND 1 PLAYING", text);
-            plane_hline_draw(PLANE_A, text, 2, 4, size, false);                
-            sound_sfx_play_auto(64, 15);
+            switch (sfx)
+            {
+            case 0:
+                ++sfx;
+                kdebug_alert("Boton A: Start sound 0");
+                size = text_render("SOUND 0 PLAYING", text);
+                sound_sfx_play_auto(64, 15);                
+                break;
+            case 1:
+                ++sfx;
+                kdebug_alert("Boton A: Start sound 1");
+                size = text_render("SOUND 1 PLAYING", text);
+                sound_sfx_play_auto(65, 15);                
+                break;
+            case 2:
+                sfx = 0;
+                kdebug_alert("Boton A: Start sound 0");
+                size = text_render("SOUND 2 PLAYING", text);
+                sound_sfx_play_auto(66, 15);                
+                break;
+            }
+            plane_hline_draw(PLANE_A, text, 2, 4, size, false);  
         }
         /* Check press button  */        
         if (pad_btn_pressed(PAD_1, PAD_BTN_B))
         {
-            kdebug_alert("Boton B: Start sound 65");
-            size = text_render("SOUND 2 PLAYING", text);
-            plane_hline_draw(PLANE_A, text, 2, 4, size, false);                
-            sound_sfx_play_auto(65, 15);
+            kdebug_alert("Boton B: Pause/Resume/Switch song");
+            switch (status)
+            {
+            // Pause
+            case 0:
+                size = text_render("MUSIC PAUSE   ", text);            
+                sound_music_pause();
+                status = 1;
+                break;
+            // Resume
+            case 1:
+                size = text_render("MUSIC RESUME   ", text);            
+                sound_music_resume();
+                status = 0;
+                break;
+            // Start new song
+            case 4:
+                switch (song)
+                {
+                case 0:
+                    size = text_render("MUSIC SONG 0", text);            
+                    sound_music_play(mus_credits);
+                    break;
+                case 1:
+                    size = text_render("MUSIC SONG 1", text);            
+                    sound_music_play(mus_demo);
+                    break;
+                case 2:
+                    size = text_render("MUSIC SONG 2", text);            
+                    sound_music_play(mus_caves);
+                    break;
+                }
+                status = 0;
+                break;
+            }
+            plane_hline_draw(PLANE_A, text, 2, 6, size, false);      
         }
         if (pad_btn_pressed(PAD_1, PAD_BTN_C))
         {
-            if (sound_sfx_is_muted())
+            sound_music_stop();
+            status = 4;
+            ++song;
+            if (song == 3)
             {
-                kdebug_alert("Boton C: Unmute sfx");
-                size = text_render("UNMUTE SOUND", text);
-                plane_hline_draw(PLANE_A, text, 2, 6, size, false);                
-                sound_sfx_unmute();
+                song = 0;
             }
-            else
-            {
-                kdebug_alert("Boton C: Mute sfx");
-                size = text_render("MUTE SOUND  ", text);
-                plane_hline_draw(PLANE_A, text, 2, 6, size, false);                
-                sound_sfx_mute();
-            }
-            //pal_swap();                
+            size = text_render("MUSIC STOP  ", text);    
+            plane_hline_draw(PLANE_A, text, 2, 6, size, false);      
         }
 
         //dma_queue_vram_transfer(font00_tiles, 100 * 16, 96 * 8 * 2, 2);
@@ -86,18 +132,3 @@ int main()
         dma_queue_flush();
     }
 }
-
-#if 0
-int main()
-{
-    smd_ints_enable();
-    //dma_vram_fill(VID_PLANE_A_ADDR, VID_PLANE_TILES <<, 0xFF, 2);
-    plane_clear(PLANE_A);
-    plane_clear(PLANE_B);
-    while (1)
-    {
- 
-        vid_vsync_wait();
-    }
-}
-#endif

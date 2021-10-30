@@ -27,8 +27,14 @@ the desired array data type, memory alignment, size alignment, etc.
 A .wav sound file format to binary format converter. This tool was previously in
 the SGDK tools set.
 
+## xgmtool
+A a Sega Megadrive VGM-XGM optimization and conversion utility.
+
 ## Credits
 - [lodepng](https://github.com/lvandeve/lodepng) PNG encoder/decoder by Lode
   Vandevenne.
 - [SGDK](https://github.com/Stephane-D/SGDK) wavtoraw tool by Stephane
   Dallongeville
+- [SGDK](https://github.com/Stephane-D/SGDK) xgmtool tool by Stephane
+  Dallongeville
+  

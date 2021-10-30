@@ -8,9 +8,9 @@
 # Tools main makefile compiler script
 #
 
-.PHONY: all paltool tilesettool tileimagetool bintoc wavtoraw clean
+.PHONY: all paltool tilesettool tileimagetool bintoc wavtoraw xgmtool clean
 
-all: paltool tilesettool tileimagetool bintoc wavtoraw
+all: paltool tilesettool tileimagetool bintoc wavtoraw xgmtool
 
 paltool:
 	@echo "-> Building paltool..."
@@ -32,6 +32,10 @@ wavtoraw:
 	@echo "-> Building wawtoraw..."
 	@make -C wavtoraw
 
+xgmtool:
+	@echo "-> Building xgmtool..."
+	@make -C xgmtool
+
 clean:
 	@echo "-> Cleaning tools..."
 	@make -C paltool clean
@@ -39,5 +43,6 @@ clean:
 	@make -C tileimagetool clean
 	@make -C bintoc clean
 	@make -C wavtoraw clean
+	@make -C xgmtool clean
 
 

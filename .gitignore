@@ -70,3 +70,5 @@ history/
 
 # XGM C driver
 src/z80_xgm.*
+src/stop_xgm.*
+

@@ -22,6 +22,7 @@
 #include "res_til.h"
 #include "res_sfx.h"
 #include "sfx.h"
+#include "mus.h"
 
 
 #endif // RES_H

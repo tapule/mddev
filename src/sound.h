@@ -5,12 +5,18 @@
  * Github: https://github.com/tapule/mddev
  *
  * File: sound.h
- * ??
+ * Sound and music system
  *
- * ??
+ * This system provides an interface to play sfx and music in the Sega
+ * Megadrive/Genesis. It uses the XGM (eXtended Genesis Music) sound driver by
+ * Stephane Dallongeville developed for SGDK.
+ * The XGM driver takes VGM (or XGM) file as input to play music. It supports 4
+ * PCM channels at a fixed 14 Khz and allows to play sfx through PCM with 16
+ * level of priority. The driver is designed to avoid DMA contention when
+ * possible (depending CPU load).
  *
  * More info:
- * 
+ * https://github.com/Stephane-D/SGDK
  */
 
 #ifndef SOUND_H
@@ -119,6 +125,36 @@ void sound_sfx_unmute(void);
  */
 bool sound_sfx_is_muted(void);
 
+/**
+ * @brief Start playing a XGM track
+ * 
+ * Load and start playing the specified XGM track. XGM files must be in its
+ * compiled form XGC. The utility xgmtool can be used to convert directly from
+ * VGM files to XGC.
+ * 
+ * @param song XGM track address
+ */
+void sound_music_play(const uint8_t *song);
 
+/**
+ * @brief Pause music
+ * 
+ * Pause playing the current song. It can be resumed using sound_music_resume.
+ */
+void sound_music_pause(void);
+
+/**
+ * @brief Resume music
+ * 
+ * Resume playing music after pausing it with sound_music_pause.
+ */
+void sound_music_resume(void);
+
+/**
+ * @brief Stop music
+ * 
+ * Stop playing the current song and reset the music system to a healthy state.
+ */
+void sound_music_stop(void);
 
 #endif /* SOUND_H */

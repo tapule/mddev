@@ -145,7 +145,7 @@ xgm:
 	@mkdir -p obj/src/xgm
 	$(ASMZ80) $(Z80FLAGS) src/xgm/z80_xgm.s80 obj/src/xgm/z80_xgm.o80 obj/z80out.lst
 	$(BINTOC) -s obj/src/xgm/z80_xgm.o80 -d src -t u8
-
+# 	$(BINTOC) -s src/xgm/stop_xgm.bin -d src -t u8
 
 # This generates a symbol table that is very helpful in debugging crashes,
 # even with an optimized release build!
