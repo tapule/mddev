@@ -25,6 +25,12 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "config.h"
+
+/* Plane convenient defines */
+#define PLANE_A VID_PLANE_A_ADDR
+#define PLANE_B VID_PLANE_B_ADDR
+#define PLANE_W VID_PLANE_W_ADDR
 
 /* Plane scroll modes (vscr | hscr1 | hscr0) */
 typedef enum vid_hscroll_mode
@@ -115,6 +121,9 @@ void vid_background_color_set(const uint8_t index);
  */
 void vid_scroll_mode_set(const vid_hscroll_mode_t hscroll_mode,
                          const vid_vscroll_mode_t vscroll_mode);
+
+
+
 
 /**
  * @brief Set the plane size for planes A and B

@@ -9,7 +9,6 @@
  */
 
 #include "video.h"
-#include "config.h"
 #include "vdp.h"
 
 /* Stores if the console is working in PAL mode */

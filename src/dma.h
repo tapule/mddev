@@ -124,6 +124,7 @@ bool dma_vsram_transfer_fast(const void *restrict src, const uint16_t dest,
  * 
  * @param dest Destination address on VRAM
  * @param length Transfer length in bytes, minimum 2
+ * @param value Value used to fill the vram
  * @param increment Write position increment after each write (normally 1)
  * @return True on success, false otherwise
  * 

@@ -180,9 +180,9 @@ void plane_rect_draw(const uint16_t plane, const uint16_t *restrict tiles,
  * @param height Rectangle height in tiles
  *
  * @note This function is meant to use RAM as tile's data source. To use it from
- * ROM, make sure to check 128kB boundaries. It also draws the line immediately.
- * Use it wisely with the display off or in the vertical blank, otherwise you
- * will get some glitches.
+ * ROM, make sure to check 128kB boundaries. It also draws the rectangle
+ * immediately. Use it wisely with the display off or in the vertical blank,
+ * otherwise you will get some glitches.
  */
 void plane_rect_draw_fast(const uint16_t plane, const uint16_t *restrict tiles,
                           const uint16_t x, const uint16_t y,

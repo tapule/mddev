@@ -19,6 +19,7 @@
 
 #include "config.h"
 
+#include "memory.h"
 #include "sys.h"
 #include "z80.h"
 #include "pad.h"
