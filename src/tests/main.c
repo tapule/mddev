@@ -4,6 +4,14 @@
 #include "../../res/res.h"
 //#include "tracks.h"
 
+typedef struct ent
+{
+    uint16_t x;
+    uint16_t y;
+} ent_t;
+
+ent_t entity;
+
 int main()
 {
     uint16_t text[128];
@@ -12,6 +20,8 @@ int main()
     uint16_t song = 0;
     uint16_t sfx = 0;
 
+    entity.x = 10;
+    entity.y = 10; 
 
     smd_ints_disable();
     
@@ -42,6 +52,15 @@ int main()
     while (1)
     {
         pad_update();
+
+        entity.x++;
+        entity.y++;
+        if (entity.x > 320)
+            entity.x = 0;
+        if (entity.y > 240)
+            entity.y = 0;
+        spr_clear();
+        spr_add(entity.x, entity.y, spr_attributes_set(1, 1, 0, 0, 0), spr_size_set(4, 4));
 
         /* Check press button  */
         if (pad_btn_pressed(PAD_1, PAD_BTN_A))
@@ -129,6 +148,7 @@ int main()
         vid_vsync_wait();
         //sound_update();
         pal_update();
+        spr_update();
         dma_queue_flush();
     }
 }

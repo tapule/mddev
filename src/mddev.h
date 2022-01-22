@@ -31,6 +31,7 @@
 #include "dma.h"
 #include "pal.h"
 #include "tiles.h"
+#include "sprite.h"
 #include "plane.h"
 #include "text.h"
 #include "kdebug.h"

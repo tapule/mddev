@@ -30,4 +30,6 @@ void smd_init(void)
     dma_init();
     /* Initialises the palette system  */
     pal_init();
+    /* Initialises the palette system  */
+    spr_init();
 }
