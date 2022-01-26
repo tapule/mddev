@@ -118,4 +118,5 @@ void spr_update(void)
 
     dma_vram_transfer_fast(spr_table, VID_SPRITE_TABLE_ADDR,
                            (spr_to_upload * sizeof(spr_entry_t)) / 2, 2);
+    spr_clear();
 }

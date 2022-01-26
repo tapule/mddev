@@ -17,6 +17,7 @@
 
 #define MDDEV_VERSION   0.1
 
+#include "assert.h"
 #include "config.h"
 
 #include "memory.h"
