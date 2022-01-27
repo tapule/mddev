@@ -22,8 +22,8 @@
  * https://www.plutiedev.com/ym2612-operations
  */
 
-#ifndef YM2612_H
-#define YM2612_H
+#ifndef MDDEV_YM2612_H
+#define MDDEV_YM2612_H
 
 /**
  * @brief initialises the YM2612 sound hardware.
@@ -35,4 +35,4 @@
  */
 void ym2612_init(void);
 
-#endif /* YM2612_H */
+#endif /* MDDEV_YM2612_H */

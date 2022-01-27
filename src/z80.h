@@ -14,8 +14,8 @@
  * https://www.plutiedev.com/using-the-z80
  */
 
-#ifndef Z80_H
-#define Z80_H
+#ifndef MDDEV_Z80_H
+#define MDDEV_Z80_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -96,4 +96,4 @@ void z80_data_load(const uint8_t *src, const uint16_t dest, uint16_t size);
  */
 void z80_program_load(const uint8_t *restrict src, uint16_t size);
 
-#endif /* Z80_H */
+#endif /* MDDEV_Z80_H */

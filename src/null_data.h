@@ -9,8 +9,8 @@
  * bytes boundary so it can be used as silent sample for the XGM sound driver. 
  */
 
-#ifndef NULL_DATA_H
-#define NULL_DATA_H
+#ifndef MDDEV_NULL_DATA_H
+#define MDDEV_NULL_DATA_H
 
 #include <stdint.h>
 
@@ -18,4 +18,4 @@
 
 extern const uint8_t null_data[NULL_DATA_SIZE];
 
-#endif /* NULL_DATA_H */
+#endif /* MDDEV_NULL_DATA_H */

@@ -24,8 +24,8 @@
  * 
  */
 
-#ifndef PAL_H
-#define PAL_H
+#ifndef MDDEV_PAL_H
+#define MDDEV_PAL_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -138,4 +138,4 @@ bool pal_is_fading(void);
  */
 void pal_update(void);
 
-#endif /* PAL_H */
+#endif /* MDDEV_PAL_H */

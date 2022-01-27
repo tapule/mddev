@@ -14,8 +14,8 @@
  * http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
  */
 
-#ifndef RAND_H
-#define RAND_H
+#ifndef MDDEV_RAND_H
+#define MDDEV_RAND_H
 
 #include <stdint.h>
 
@@ -57,4 +57,4 @@ uint16_t rnd_seed_get(void);
  */
 uint16_t rnd_get(void);
 
-#endif /* RAND_H */
+#endif /* MDDEV_RAND_H */

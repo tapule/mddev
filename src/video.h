@@ -20,8 +20,8 @@
  * 
  */
 
-#ifndef VIDEO_H
-#define VIDEO_H
+#ifndef MDDEV_VIDEO_H
+#define MDDEV_VIDEO_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -151,4 +151,4 @@ void vid_autoinc_set(const uint8_t increment);
 
 
 
-#endif /* VIDEO_H */
+#endif /* MDDEV_VIDEO_H */

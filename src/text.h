@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef TEXT_H
-#define TEXT_H
+#ifndef MDDEV_TEXT_H
+#define MDDEV_TEXT_H
 
 #include <stdint.h>
 
@@ -70,4 +70,4 @@ uint16_t text_render(const char *str, uint16_t *dest);
  */
 uint16_t text_nrender(const char *str, uint16_t *dest, const uint16_t size);
 
-#endif /* TEXT_H */
+#endif /* MDDEV_TEXT_H */

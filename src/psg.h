@@ -17,8 +17,8 @@
  * https://blog.bigevilcorporation.co.uk/2012/09/03/sega-megadrive-10-sound-part-i-the-psg-chip/
  */
 
-#ifndef PSG_H
-#define PSG_H
+#ifndef MDDEV_PSG_H
+#define MDDEV_PSG_H
 
 /**
  * @brief initialises the PSG sound hardware.
@@ -31,4 +31,4 @@
  */
 void psg_init(void);
 
-#endif /* PSG_H */
+#endif /* MDDEV_PSG_H */

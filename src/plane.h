@@ -22,8 +22,8 @@
  * 
  */
 
-#ifndef PLANE_H
-#define PLANE_H
+#ifndef MDDEV_PLANE_H
+#define MDDEV_PLANE_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -188,4 +188,4 @@ void plane_rect_draw_fast(const uint16_t plane, const uint16_t *restrict tiles,
                           const uint16_t x, const uint16_t y,
                           const uint16_t width, const uint16_t height);
 
-#endif /* PLANE_H */
+#endif /* MDDEV_PLANE_H */

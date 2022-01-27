@@ -20,8 +20,8 @@
  * 
  */
 
-#ifndef TILES_H
-#define TILES_H
+#ifndef MDDEV_TILES_H
+#define MDDEV_TILES_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -49,4 +49,4 @@ void tiles_load(const void *restrict src, const uint16_t tile_index,
 void tiles_load_fast(const void *restrict src, const uint16_t tile_index,
                      const uint16_t length);
 
-#endif /* TILES_H */
+#endif /* MDDEV_TILES_H */

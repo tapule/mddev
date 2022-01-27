@@ -19,8 +19,8 @@
  * https://github.com/Stephane-D/SGDK
  */
 
-#ifndef SOUND_H
-#define SOUND_H
+#ifndef MDDEV_SOUND_H
+#define MDDEV_SOUND_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -157,4 +157,4 @@ void sound_music_resume(void);
  */
 void sound_music_stop(void);
 
-#endif /* SOUND_H */
+#endif /* MDDEV_SOUND_H */

@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef SPRITE_H
-#define SPRITE_H
+#ifndef MDDEV_SPRITE_H
+#define MDDEV_SPRITE_H
 
 #include<stdint.h>
 
@@ -32,4 +32,4 @@ void spr_clear(void);
 
 void spr_update(void);
 
-#endif /* SPRITE_H */
+#endif /* MDDEV_SPRITE_H */

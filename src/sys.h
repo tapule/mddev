@@ -11,8 +11,8 @@
  * https://www.eeeguide.com/register-architecture-of-68000-microprocessor/
  */
 
-#ifndef SYS_H
-#define SYS_H
+#ifndef MDDEV_SYS_H
+#define MDDEV_SYS_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -68,4 +68,4 @@ bool smd_is_japanese(void);
 
 */
 
-#endif /* SYS_H */
+#endif /* MDDEV_SYS_H */

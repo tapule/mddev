@@ -15,8 +15,8 @@
  * https://documentation.help/Gens-KMod/documentation.pdf
  */
 
-#ifndef KDEBUG_H
-#define KDEBUG_H
+#ifndef MDDEV_KDEBUG_H
+#define MDDEV_KDEBUG_H
 
 /* Debugging disabled so do not evaluate kdebug functions. */
 #ifdef NDEBUG
@@ -71,4 +71,4 @@ void __kdebug_timer_output(void);
 
 #endif
 
-#endif /* KDEBUG_H */
+#endif /* MDDEV_KDEBUG_H */

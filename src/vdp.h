@@ -11,8 +11,8 @@
  * 
  */
 
-#ifndef VDP_H
-#define VDP_H
+#ifndef MDDEV_VDP_H
+#define MDDEV_VDP_H
 
 #include <stdint.h>
 /*
@@ -98,4 +98,4 @@
 #define VDP_DMA_CRAM_WRITE_CMD      0xC0000080
 #define VDP_DMA_VSRAM_WRITE_CMD     0x40000090
 
-#endif /* VDP_H */
+#endif /* MDDEV_VDP_H */

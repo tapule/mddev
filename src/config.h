@@ -14,8 +14,8 @@
  * 
  */
 
-#ifndef MEGADRIVE_CONFIG_H
-#define MEGADRIVE_CONFIG_H
+#ifndef MDDEV_CONFIG_H
+#define MDDEV_CONFIG_H
 
 #include "video.h"
 
@@ -57,4 +57,4 @@
 /* DMA internal queue size in operations */
 #define DMA_QUEUE_SIZE 64
 
-#endif /* MEGADRIVE_CONFIG_H */
+#endif /* MDDEV_CONFIG_H */

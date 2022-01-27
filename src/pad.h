@@ -19,8 +19,8 @@
  * https://www.chibiakumas.com/68000/platform2.php#LessonP11
  */
 
-#ifndef PAD_H
-#define PAD_H
+#ifndef MDDEV_PAD_H
+#define MDDEV_PAD_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -114,4 +114,4 @@ bool pad_btn_pressed(const uint16_t pad, const uint16_t buttons);
  */
 bool pad_btn_released(const uint16_t pad, const uint16_t buttons);
 
-#endif /* PAD_H */
+#endif /* MDDEV_PAD_H */

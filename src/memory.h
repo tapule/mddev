@@ -9,8 +9,8 @@
  * 
  */
 
-#ifndef MEMORY_H
-#define MEMORY_H
+#ifndef MDDEV_MEMORY_H
+#define MDDEV_MEMORY_H
 
 #include <stdint.h>
 
@@ -36,4 +36,4 @@ void mem_set(void *dest, uint8_t value, uint16_t size);
  */
 void mem_copy(void *dest, const void *src, uint16_t size);
 
-#endif /* MEMORY_H */
+#endif /* MDDEV_MEMORY_H */

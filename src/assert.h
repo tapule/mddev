@@ -18,8 +18,8 @@
  * http://www.pixelbeat.org/programming/gcc/static_assert.html
  */
 
-#ifndef CT_ASSERT_H
-#define CT_ASSERT_H
+#ifndef MDDEV_CTASSERT_H
+#define MDDEV_CTASSERT_H
 
 #define CT_ASSERT_PASTE(a,b) a##b
 #define CT_ASSERT_LINE(predicate, line, file) \
@@ -40,4 +40,4 @@
  */
 #define ct_assert(predicate, file) CT_ASSERT_LINE(predicate,__LINE__,file)
 
-#endif /* CT_ASSERT_H */
+#endif /* MDDEV_CTASSERT_H */

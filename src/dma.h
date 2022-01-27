@@ -18,8 +18,8 @@
  * https://github.com/Stephane-D/SGDK/blob/master/inc/dma.h
  */
 
-#ifndef DMA_H
-#define DMA_H
+#ifndef MDDEV_DMA_H
+#define MDDEV_DMA_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -190,4 +190,4 @@ bool dma_queue_cram_transfer(const void *restrict src, const uint16_t dest,
 bool dma_queue_vsram_transfer(const void *restrict src, const uint16_t dest,
                               const uint16_t length, const uint16_t increment);
 
-#endif /* DMA_H */
+#endif /* MDDEV_DMA_H */
