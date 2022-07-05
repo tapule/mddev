@@ -47,13 +47,15 @@ LIBS     = -L$(MARSDEV)/m68k-elf/lib/gcc/m68k-elf/$(GCC_VER) -lgcc
 #LIBS    += -L$(MARSDEV)/m68k-elf/m68k-elf/lib -lnosys
 
 # Default base flags
-CCFLAGS  = -m68000 -Wall -Wextra -std=c17 -ffreestanding
+#CCFLAGS  = -m68000 -Wall -Wextra -std=c17 -ffreestanding
+#CCFLAGS  = -m68000 -Wall -Wextra -Wno-unused-local-typedefs -std=c17 -ffreestanding
+CCFLAGS  = -m68000 -Wno-unused-local-typedefs -std=c17 -ffreestanding
 ASFLAGS  = -m68000 --register-prefix-optional
 LDFLAGS  = -T src/smd.ld -nostdlib
 Z80FLAGS = -isrc/xgm
 
 # Extra flags set by debug or release target as needed
-EXFLAGS  = 
+EXFLAGS  =
 
 # Sources
 CSRC  = $(wildcard src/*.c)
@@ -91,7 +93,7 @@ release: EXFLAGS  = -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fshort-enums
 release: EXFLAGS += -fomit-frame-pointer -flto -fuse-linker-plugin
 release: EXFLAGS += -fno-unwind-tables -DNDEBUG
 # release: EXFLAGS += -Wno-shift-negative-value -Wno-main -Wno-unused-parameter -fno-builtin
-release: bin/rom.bin obj/symbol.txt 
+release: bin/rom.bin obj/symbol.txt
 
 # Debug target, enables GDB tracing for Blastem, GensKMod, etc.
 debug: EXFLAGS = -g -Og -DDEBUG
@@ -114,7 +116,7 @@ bin/rom.bin: bin/rom.elf
 	@echo "-> Stripping ELF header..."
 	@mkdir -p $(dir $@)
 	@$(OBJC) -O binary $< bin/unpad.bin
-	@echo "-> Padding rom file..."	
+	@echo "-> Padding rom file..."
 	@dd if=bin/unpad.bin of=$@ bs=8192 conv=sync
 	@rm -f bin/unpad.bin
 
@@ -123,7 +125,7 @@ obj/%.o: %.c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CCFLAGS) $(EXFLAGS) $(INCS) -c $< -o $@
 
-obj/%.o: %.s 
+obj/%.o: %.s
 	@echo "AS $<"
 	@mkdir -p $(dir $@)
 	@$(AS) $(ASFLAGS) $< -o $@
@@ -131,7 +133,8 @@ obj/%.o: %.s
 obj/%.lst: %.c
 	@echo "-> Exporting ASM listings..."
 	@mkdir -p $(dir $@)
-	@$(CC) $(CCFLAGS) $(EXFLAGS) $(INCS) -S -c $< -o $@
+ 	@$(CC) $(CCFLAGS) $(EXFLAGS) $(INCS) -S -c $< -o $@
+#	@$(CC) $(CCFLAGS) $(EXFLAGS) $(INCS) -S -fverbose-asm -c $< -o $@
 
 # %.o80: %.s80
 #	$(ASMZ80) $(Z80FLAGS) $< $@ obj/z80out.lst
@@ -158,7 +161,7 @@ tools:
 	@echo "-> Building tools..."
 	@make -C tools
 
-.PHONY: run drun clean 
+.PHONY: run drun clean cleanall
 
 run: release
 	@echo "-> running..."
@@ -174,4 +177,10 @@ clean:
 	@echo "-> Cleaning project..."
 	@rm -rf obj
 	@rm -f bin/rom.elf bin/unpad.bin bin/rom.bin
-	# @make -C tools clean
+
+cleanall:
+	@echo "-> Cleaning project and tools..."
+	@rm -rf obj
+	@rm -f bin/rom.elf bin/unpad.bin bin/rom.bin
+	@make -C tools clean
+	@rm -f src/z80_xgm.h src/z80_xgm.c

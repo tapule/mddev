@@ -18,6 +18,7 @@ void rnd_init(void)
 {
     uint16_t rnd_var;
 
+    /* CHECKME: Seems that this is not so random */
     /* Mix a random generated value with the MegaDrive HV counter */
     rnd_var = (uint16_t) 0xCE52 ^ (uint16_t) (0xCE52 << 9);
     rnd_seed = *VDP_PORT_HV_COUNTER ^ (*VDP_PORT_HV_COUNTER >> 7);

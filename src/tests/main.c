@@ -19,19 +19,20 @@ int main()
     uint16_t status = 0;
     uint16_t song = 0;
     uint16_t sfx = 0;
+    uint16_t i;
 
     entity.x = 10;
     entity.y = 10; 
 
     smd_ints_disable();
-    
-    tiles_load_fast(res_font_sys, VRAM_INDEX_FONT, RES_FONT_SYS_SIZE);
-    tiles_load_fast(res_img_skel_tileset, 1, RES_IMG_SKEL_TILESET_SIZE);
 
     pal_primary_set(PAL_0_INDEX, RES_PAL_PLAYER_SIZE, res_pal_player);
     pal_primary_set(PAL_1_INDEX, RES_PAL_COLLECTIBLES_SIZE, res_pal_collectibles);            
     pal_primary_set(PAL_2_INDEX, RES_PAL_ENEMY00_SIZE, res_pal_enemy00);
     pal_primary_set(PAL_3_INDEX, RES_PAL_ENEMY01_SIZE, res_pal_enemy01);   
+
+    tiles_load_fast(res_font_sys, VRAM_INDEX_FONT, RES_FONT_SYS_SIZE);
+    tiles_load_fast(res_img_skel_tileset, 1, RES_IMG_SKEL_TILESET_SIZE);
 
     text_font_set(VRAM_INDEX_FONT);
     text_pal_set(PAL_1);
@@ -48,19 +49,23 @@ int main()
 
     smd_ints_enable();
     vid_display_enable();
+
     kdebug_alert("Iniciando cuerpo principal");
+
+    vid_background_color_set(0);
+
     while (1)
     {
-        pad_update();
 
-        entity.x++;
-        entity.y++;
-        if (entity.x > 320)
-            entity.x = 0;
-        if (entity.y > 240)
-            entity.y = 0;
-        spr_clear();
-        spr_add(entity.x, entity.y, spr_attributes_set(1, 1, 0, 0, 0), spr_size_set(4, 4));
+        /* Blue Logic */
+        vid_background_color_set(7);
+        for (i = 0; i < 95; ++i)
+        {
+            spr_add(entity.x + i, i * 2, spr_attributes_set(1, 1, 0, 0, 0), spr_size_set(4, 4));
+        }
+
+
+        pad_update();
 
         /* Check press button  */
         if (pad_btn_pressed(PAD_1, PAD_BTN_A))
@@ -141,14 +146,21 @@ int main()
             plane_hline_draw(PLANE_A, text, 2, 6, size, false);      
         }
 
-        //dma_queue_vram_transfer(font00_tiles, 100 * 16, 96 * 8 * 2, 2);
+        //dma_queue_vram_transfer(res_font_sys, 100 * 16, 96 * 8 * 2, 2);
+        //dma_queue_vram_transfer(res_font_sys, 100 * 16, 96 * 8 * 2, 2);
         //dma_queue_cram_transfer(font00_pal, 16, 16, 2);
         //dma_queue_vsram_transfer(data, 0, 2, 2);
 
+        /* White free time */
+        vid_background_color_set(15);
         vid_vsync_wait();
-        //sound_update();
+        //sound_update(); // Ojo, hecho automáticamente en el vint
         pal_update();
         spr_update();
+
+        /* Red dma */
+        vid_background_color_set(2);
         dma_queue_flush();
+        vid_background_color_set(0);
     }
 }
