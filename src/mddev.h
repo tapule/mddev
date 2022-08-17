@@ -36,6 +36,7 @@
 #include "plane.h"
 #include "text.h"
 #include "kdebug.h"
+#include "fix32.h"
 
 /**
  * @brief initialises the Sega Megadrive/Genesis hardware

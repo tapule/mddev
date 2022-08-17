@@ -20,8 +20,14 @@ int main()
     uint16_t song = 0;
     uint16_t sfx = 0;
     uint16_t i;
+    fix32_t f1, f2;
 
-    entity.x = 10;
+    f1 = fix32_from_int(0);
+    f2 = fix32_from_float(0.25);
+
+    f1 = f1 + f2 + fix32_from_float(0.75);
+    
+    entity.x = fix32_to_int(f1);
     entity.y = 10; 
 
     smd_ints_disable();
