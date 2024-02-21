@@ -45,6 +45,28 @@ typedef struct spr_entry
 	int16_t x;
 } spr_entry_t;
 
+/*
+ * Look up table to convert from VDP Sprite sizes to sizes in tiles
+ */
+static const uint8_t spr_size_table[16] = {
+    1,      /* SPR_SIZE_1X1 - 0b0000 */
+    2,      /* SPR_SIZE_1X2 - 0b0001 */
+    3,      /* SPR_SIZE_1X3 - 0b0010 */
+    4,      /* SPR_SIZE_1X4 - 0b0011 */
+    2,      /* SPR_SIZE_2X1 - 0b0100 */
+    4,      /* SPR_SIZE_2X2 - 0b0101 */
+    6,      /* SPR_SIZE_2X3 - 0b0110 */
+    8,      /* SPR_SIZE_2X4 - 0b0111 */
+    3,      /* SPR_SIZE_3X1 - 0b1000 */
+    6,      /* SPR_SIZE_3X2 - 0b1001 */
+    9,      /* SPR_SIZE_3X3 - 0b1010 */
+    12,     /* SPR_SIZE_3X4 - 0b1011 */
+    4,      /* SPR_SIZE_4X1 - 0b1100 */
+    8,      /* SPR_SIZE_4X2 - 0b1101 */
+    12,     /* SPR_SIZE_4X3 - 0b1110 */
+    16      /* SPR_SIZE_4X4 - 0b1111 */
+};
+
 /* Sprite table buffer and sprites counter */
 static spr_entry_t spr_table[SPR_MAX];
 static spr_entry_t* spr_next;
@@ -56,18 +78,40 @@ inline void spr_init(void)
     spr_clear();
 }
 
-inline uint16_t spr_attributes_set(const uint16_t tile_index,
-                                const uint16_t palette, const uint16_t h_flip,
-                                const uint16_t v_flip, const uint16_t priority)
+inline uint16_t spr_attributes_encode(const uint16_t priority,
+                            const uint16_t palette, const uint16_t v_flip,
+                            const uint16_t h_flip, const uint16_t tile_index)
 {
     return (priority << 15) | (palette << 13) | (v_flip << 12) |
            (h_flip << 11) | tile_index;
 }
 
-inline uint8_t spr_size_set(const uint8_t width, const uint8_t height)
+inline void spr_attributes_vflip(uint16_t* attributes)
+{
+    *attributes ^= 0x1000;
+}
+
+inline uint16_t spr_attributes_vflipb(uint16_t attributes)
+{
+    return attributes ^ 0x1000;
+}
+
+inline void spr_attributes_hflip(uint16_t* attributes)
+{
+    *attributes ^= 0x0800;
+}
+
+inline uint8_t spr_size_encode(const uint8_t width, const uint8_t height)
 {
     return (((height - 1) & 0x03) | (((width - 1) & 0x03) << 2));
 }
+
+inline uint8_t spr_size_to_tiles(const spr_size_t size)
+{
+    return spr_size_table[size];
+}
+
+
 
 /* Temporal function, only for test purpouse */
 /*

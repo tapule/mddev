@@ -9,9 +9,9 @@
 #
 
 # Default paths for Marsdev
-MARSDEV  ?= ../toolchain/mars
+MARSDEV  ?= /opt/mars
 MARSBIN  := $(MARSDEV)/m68k-elf/bin
-TOOLSBIN := $(MARSDEV)/m68k-elf/bin
+TOOLSBIN := $(MARSDEV)/bin
 
 # GCC environment
 CC   := $(MARSBIN)/m68k-elf-gcc
@@ -60,7 +60,7 @@ EXFLAGS  =
 
 # Sources
 CSRC  = $(wildcard src/*.c)
-CSRC += $(wildcard tests/*.c)
+CSRC += $(wildcard src/tests/*.c)
 SSRC =  $(wildcard src/boot/*.s)
 SSRC += $(wildcard src/*.s)
 SSRC += $(wildcard src/tests/*.s)

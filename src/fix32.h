@@ -14,6 +14,8 @@
 
 #include<stdint.h>
 
+// CHECKME: Debería poner también el fix16 como 8:8
+
 typedef int32_t fix32_t;
 
 /* How many fractional bits has our fix32 type */
@@ -30,6 +32,7 @@ typedef int32_t fix32_t;
 
 /* Get fractional and integer parts from a fix32 */
 #define fix32_get_fract(fix)    ((fix) & FIX32_FRACT_MASK)
+// CHECKME: ¿No se podría hacer esto simplemente casteando a int16_t?
 #define fix32_get_int(fix)      (((fix) & FIX32_INT_MASK) >> FIX32_FRACT_BITS)
 
 /* Non direct operations. Be aware that there is no overflow checks */

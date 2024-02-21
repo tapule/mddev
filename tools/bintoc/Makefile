@@ -10,37 +10,54 @@
 # bintoc compiler makefile script
 #
 
+# Application name
+APP := bintoc
+
+# Tools
+CC		:= gcc
+MKDIR   := mkdir -p
+RM      := rm -f
+
 # MDDev bin dir
-MDDEVBIN = ../../bin
+BINDIR  := ../../bin
+SRCDIR  := src
+SRCTREE := $(shell find $(SRCDIR) -type d)
+OBJDIR  := obj
+OBJTREE := $(SRCTREE:$(SRCDIR)%=$(OBJDIR)%)
 
 # Default base flags
-CFLAGS  := $(CFLAGS) -Wall -Wextra -std=c17
+CFLAGS  := $(CFLAGS) -Wall -Wextra -pedantic -std=c23
 LDFLAGS := $(LDFLAGS)
 
-# Sources
-CSRC  = $(wildcard src/*.c)
+# Sources and objects
+CSRC  := $(foreach DIR,$(SRCTREE),$(wildcard $(DIR)/*.c))
+OBJS  := $(patsubst $(SRCDIR)%,$(OBJDIR)%,$(CSRC:.c=.o))
 
-# Objets files
-OBJS  = $(CSRC:.c=.o)
-
-.PHONY: all release debug clean
+.PHONY: all release debug clean info
 
 all: release
 
 release: EXFLAGS  = -O3
-release: bintoc
+release: $(APP)
 
 debug: EXFLAGS = -g -Og -DDEBUG
-debug: bintoc
+debug: $(APP)
 
-bintoc: $(OBJS)
-	@mkdir -p $(MDDEVBIN)
-	$(CC) $(LDFLAGS) -o $(MDDEVBIN)/$@ $(OBJS)
+$(APP): $(BINDIR) $(OBJTREE) $(OBJS)
+	$(CC) $(LDFLAGS) -o $(BINDIR)/$@ $(OBJS)
 
-src/%.o: src/%.c
+obj/%.o: src/%.c
 	$(CC) $(CCFLAGS) $(EXFLAGS) -c $< -o $@
 
+$(BINDIR) $(OBJTREE):
+	@$(MKDIR) $@
+
 clean:
-	@rm -f src/*.o
+	@rm -rf obj
 	@rm -f $(MDDEVBIN)/bintoc
 
+info:
+	$(info $(SRCTREE))
+	$(info $(OBJTREE))
+	$(info $(CSRC))
+	$(info $(OBJS))
